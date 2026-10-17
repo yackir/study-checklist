@@ -305,3 +305,16 @@
  :root .task-delete-dialog .dialog-actions{gap:7px}
  :root .task-delete-dialog .action{padding:9px 7px;font-size:12px}
 }
+
+/* PULSE: the original modern design is now a full-size theme-gallery choice.
+   Its existing styling and localStorage key ("modern") stay exactly unchanged. */
+.theme-choice[data-design-choice="modern"]{
+ --preview-page:#192f58;
+ --preview-card:#ffffff;
+ --preview-ink:#202c49;
+ --preview-accent:#315ecc;
+ --preview-soft:#e3ebff;
+ --preview-art:radial-gradient(circle at 86% 22%,#f8d56e 0 13%,transparent 14%),
+               radial-gradient(circle at 15% 92%,#ed8b77 0 18%,transparent 19%);
+}
+.theme-choice[data-design-choice="modern"] .theme-art{background-size:100% 100%}
