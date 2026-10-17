@@ -163,6 +163,22 @@
 .app-dialog.photo-viewer{width:min(960px,96vw);max-width:96vw;padding:16px}
 .photo-viewer img{display:block;max-width:100%;max-height:75dvh;width:auto;height:auto;margin:12px auto;object-fit:contain}
 .photo-viewer .dialog-actions{position:sticky;bottom:0}
+.photo-tools .action.photo-add{width:100%;display:flex;gap:12px;min-height:72px;padding:12px 14px;text-align:start;background:var(--surface,var(--photo-surface));color:var(--ink,var(--photo-ink));border-color:var(--line,var(--photo-line));transition:box-shadow .18s,transform .18s}
+.photo-emblem{display:grid;place-items:center;width:46px;height:46px;flex:none;border-radius:14px;background:var(--soft,var(--photo-soft));color:var(--softink,var(--photo-accent))}
+.photo-emblem .photo-icon{width:37px;height:37px}
+.photo-button-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+.photo-button-copy strong{font-size:14px;font-weight:800;line-height:1.3}
+.photo-button-copy small{font-size:11px;font-weight:500;color:var(--muted,#736b7c);line-height:1.4}
+.photo-button-arrow{margin-inline-start:auto;color:var(--accent,var(--photo-accent));font-size:22px}
+:root[data-design="modern"] .photo-emblem{background:#315ecc;color:#fff}
+:root[data-design="theme-voltage"] .photo-emblem{border-radius:6px;background:var(--accent);color:var(--on);transform:rotate(-5deg)}
+:root[data-design="theme-pop"] .photo-emblem{border:1.5px solid var(--line);transform:rotate(4deg)}
+:root[data-design="theme-cosmos"] .photo-emblem{background:var(--soft);box-shadow:inset 0 0 0 1px var(--accent),0 0 15px #8de6dc20}
+:root[data-design="theme-notebook"] .photo-emblem{border-radius:7px;border:1px dashed var(--accent)}
+:root[data-design="theme-golden"] .photo-emblem{border-radius:50%;background:var(--accent);color:var(--on)}
+@media(hover:hover){.photo-tools .action.photo-add:hover{box-shadow:0 4px 15px var(--shadow,#79549a20)}}
+@media(prefers-reduced-motion:reduce){.photo-tools .action.photo-add{transition:none}}
+
 </style></head><body><main class="wrap"><header class="top"><div><div class="brand">המשימות שלי</div><div class="sub">מעקב לימודים · סמסטר א׳ תשפ״ז</div></div><div class="header-actions"><div class="tag">אוניברסיטה</div><div class="menu-shell"><button type="button" class="menu-button" id="menuButton" aria-label="פתיחת תפריט הניווט" aria-controls="topMenu" aria-expanded="false" aria-haspopup="true"><span class="menu-lines" aria-hidden="true">☰</span><span>תפריט</span></button><nav class="top-menu" id="topMenu" aria-label="ניווט באפליקציה" hidden><div class="menu-caption">ניווט</div><a class="menu-link" href="#home" data-page-link="home"><span class="menu-icon" aria-hidden="true">⌂</span><span>לוח הלימודים</span><span class="menu-arrow" aria-hidden="true">←</span></a><div class="menu-caption menu-divider">הגדרות</div><a class="menu-link" href="#appearance" data-page-link="appearance"><span class="menu-icon" aria-hidden="true">◈</span><span>מראה ועיצוב</span><span class="menu-arrow" aria-hidden="true">←</span></a><a class="menu-link" href="#courses" data-page-link="courses"><span class="menu-icon" aria-hidden="true">✎</span><span>עריכת קורסים</span><span class="menu-arrow" aria-hidden="true">←</span></a><a class="menu-link" href="#notifications" data-page-link="notifications"><span class="menu-icon" aria-hidden="true">♧</span><span>התראות באייפון</span><span class="menu-arrow" aria-hidden="true">←</span></a><a class="menu-link" href="#backup" data-page-link="backup"><span class="menu-icon" aria-hidden="true">⇩</span><span>גיבוי נתונים</span><span class="menu-arrow" aria-hidden="true">←</span></a></nav></div></div></header><div id="message" class="global-message" role="status" aria-live="polite"></div><section class="card app-page" id="homePage" data-page="home"><div id="weekView"><div class="week-switcher" role="group" aria-label="ניווט בין שבועות">
 <button type="button" class="week-step" id="prev" aria-label="הצגת השבוע הקודם"><span class="week-step-arrow" aria-hidden="true">→</span></button>
 <button type="button" class="week-current" id="today" aria-label="בחירת שבוע והצגת כל השבועות" aria-controls="historyView"><span class="week-current-label">השבוע הנוכחי</span><span class="week-dates" id="weekTitle" dir="ltr"></span></button>
@@ -313,7 +329,7 @@ function photoIcon(kind='camera'){
  const span=document.createElement('span');span.setAttribute('aria-hidden','true');
  // Original line icons, inheriting the active theme's foreground color.
  span.innerHTML=kind==='camera'
-  ?'<svg class="photo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 9.5h5l2-3h8l2 3h5a2 2 0 0 1 2 2V25a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11.5a2 2 0 0 1 2-2Z" fill="currentColor" fill-opacity=".09" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="16" cy="18" r="6" stroke="currentColor" stroke-width="1.8"/><path d="M13 18a3 3 0 0 1 3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="25" cy="13" r="1.3" fill="currentColor"/></svg>'
+  ?'<svg class="photo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m8 12 1-5a3 3 0 0 1 3.5-2.4l17 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".5"/><path d="M7 13h5l2.5-4h9l2.5 4h4a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V16a3 3 0 0 1 3-3Z" fill="currentColor" fill-opacity=".1" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="18.5" cy="23" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M15 23a3.5 3.5 0 0 1 3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="m29 27 3 3 6-7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="29" cy="17" r="1.3" fill="currentColor"/></svg>'
   :'<svg class="photo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="4" width="23" height="23" rx="4" fill="currentColor" fill-opacity=".09" stroke="currentColor" stroke-width="1.8"/><path d="M5 22l7-8 6 6 4-4 6 6M2 10v17a3 3 0 0 0 3 3h17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22" cy="10" r="2" fill="currentColor"/></svg>';
  return span;
 }
@@ -352,13 +368,20 @@ function courseDetails(key,name){
  const field=document.createElement('input');field.className='new-task';field.placeholder='משימה חדשה…';field.setAttribute('aria-label','משימה חדשה: '+name);field.required=true;
  const add=document.createElement('button');add.type='submit';add.className='action';add.textContent='הוספה';form.append(field,add);body.append(form);
  const photoTools=document.createElement('div');photoTools.className='photo-tools';
- const camera=document.createElement('button');camera.type='button';camera.className='action photo-add';camera.append(photoIcon(),document.createTextNode('הוספת תמונה'));camera.setAttribute('aria-label','הוספת תמונה למשימה: '+name);
+ const camera=document.createElement('button');camera.type='button';camera.className='action photo-add';const emblem=photoIcon();emblem.className='photo-emblem';
+ const copy=document.createElement('span');copy.className='photo-button-copy';
+ const title=document.createElement('strong');title.textContent='תמונה של המשימה';
+ const subtitle=document.createElement('small');subtitle.textContent='צילום חדש או תמונה מהגלריה';copy.append(title,subtitle);
+ const arrow=document.createElement('span');arrow.className='photo-button-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent='←';
+ camera.append(emblem,copy,arrow);camera.setAttribute('aria-label','תמונה של המשימה: '+name);
  const picker=document.createElement('input');picker.type='file';picker.accept='image/*';picker.setAttribute('capture','environment');picker.hidden=true;
  const gallery=document.createElement('input');gallery.type='file';gallery.accept='image/*';gallery.hidden=true;
- const hint=document.createElement('span');hint.className='photo-hint';hint.textContent='צילום או תמונה מהגלריה';
- photoTools.append(camera,picker,gallery,hint);body.append(photoTools);
+ photoTools.append(camera,picker,gallery);body.append(photoTools);
  camera.onclick=()=>{
   document.activeElement?.blur();
+  // iOS owns its source menu; avoid making users choose a source twice.
+  const isAppleMobile=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(isAppleMobile){gallery.click();return}
   const dialog=courseDialog('הוספת תמונה');dialog.classList.add('photo-source-dialog');
   const options=document.createElement('div');options.className='photo-source-options';
   const take=dialogButton('צילום תמונה','',()=>{dialog.close();picker.click()});take.prepend(photoIcon());take.autofocus=true;
