@@ -370,10 +370,10 @@ function courseDetails(key,name){
  const photoTools=document.createElement('div');photoTools.className='photo-tools';
  const camera=document.createElement('button');camera.type='button';camera.className='action photo-add';const emblem=photoIcon();emblem.className='photo-emblem';
  const copy=document.createElement('span');copy.className='photo-button-copy';
- const title=document.createElement('strong');title.textContent='תמונה של המשימה';
+ const title=document.createElement('strong');title.textContent='תמונת המשימה';
  const subtitle=document.createElement('small');subtitle.textContent='צילום חדש או תמונה מהגלריה';copy.append(title,subtitle);
  const arrow=document.createElement('span');arrow.className='photo-button-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent='←';
- camera.append(emblem,copy,arrow);camera.setAttribute('aria-label','תמונה של המשימה: '+name);
+ camera.append(emblem,copy,arrow);camera.setAttribute('aria-label','תמונת המשימה: '+name);
  const picker=document.createElement('input');picker.type='file';picker.accept='image/*';picker.setAttribute('capture','environment');picker.hidden=true;
  const gallery=document.createElement('input');gallery.type='file';gallery.accept='image/*';gallery.hidden=true;
  photoTools.append(camera,picker,gallery);body.append(photoTools);
