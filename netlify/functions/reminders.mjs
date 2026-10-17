@@ -16,11 +16,6 @@ export default async () => {
   if (Number(now.hour)!==10) return;
   const today=`${now.year}-${now.month}-${now.day}`;
   const weekday=new Date(today+'T12:00:00Z').getUTCDay();
-  const isSummary=weekday===6;
-  const target=weekday===5?plusDays(today,2):plusDays(today,1);
-  const targetWeek=sundayOf(isSummary?today:target);
-  if (!isSummary && (weekday===6 || !inSemester(target))) return;
-  if (isSummary && !inSemester(plusDays(targetWeek,0))) return;
   const {SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,VAPID_SUBJECT}=process.env;
   if (![SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,VAPID_SUBJECT].every(Boolean)) throw new Error('Missing server env');
   webpush.setVapidDetails(VAPID_SUBJECT,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY);
@@ -32,7 +27,19 @@ export default async () => {
     if(!subs?.length)break;
     const byUser=new Map();for(const s of subs){if(!byUser.has(s.user_id))byUser.set(s.user_id,[]);byUser.get(s.user_id).push(s)}
     for(const [userId,userSubs] of byUser){
-      const indices=COURSE_DAYS.map((d,i)=>({d,i})).filter(x=>isSummary?inSemester(plusDays(targetWeek,x.d)):plusDays(targetWeek,x.d)===target).map(x=>x.i);
+      const saved=userSubs.find(s=>Array.isArray(s.subscription?.courses))?.subscription.courses;
+      const courses=saved===undefined?COURSE_DAYS.map((day,i)=>({id:String(i),day,name:COURSE_NAMES[i]})):saved;
+      if(!Array.isArray(courses)||courses.some(c=>!c||typeof c.id!=='string'||!Number.isInteger(c.day)||c.day<0||c.day>6||typeof c.name!=='string')){console.error('Invalid reminder schedule');continue}
+      const hasWeekend=courses.some(c=>c.day===5||c.day===6);
+      const runs=weekday===6?[true,...(hasWeekend?[false]:[])]:[false];
+      for(const isSummary of runs){
+      const target=weekday===5&&!hasWeekend?plusDays(today,2):plusDays(today,1);
+      const targetWeek=sundayOf(isSummary?today:target);
+      if(!isSummary&&!inSemester(target))continue;
+      if(isSummary&&!inSemester(targetWeek))continue;
+      const names=new Map(courses.map(c=>[c.id,c.name]));
+      const indices=courses.filter(c=>isSummary?inSemester(plusDays(targetWeek,c.day)):(plusDays(targetWeek,c.day)===target)).map(c=>c.id);
+      if(!indices.length)continue;
       const keys=indices.map(i=>`${targetWeek}|${i}`);
       const {data:checks,error:checkError}=await db.from('study_checks').select('task_key,done').eq('user_id',userId).in('task_key',keys);
       if(checkError){console.error('checks failed',checkError);continue}
@@ -43,9 +50,10 @@ export default async () => {
       // Idempotency: one message per user per day. Logs persist and old weeks are never revisited.
       const {error:logError}=await db.from('notification_log').insert({user_id:userId,local_date:today,kind});
       if(logError){if(logError.code!=='23505')console.error('log failed',logError);continue}
-      const body=isSummary?`השבוע הסתיים: ${indices.length-incomplete.length} מתוך ${indices.length} הושלמו.${incomplete.length?' לא סומנו: '+incomplete.map(i=>COURSE_NAMES[i]).join('، '):' כל הכבוד!'} `:`למועד הלימודים הקרוב לא סומנו: ${incomplete.map(i=>COURSE_NAMES[i]).join('، ')}`;
+      const body=isSummary?`השבוע הסתיים: ${indices.length-incomplete.length} מתוך ${indices.length} הושלמו.${incomplete.length?' לא סומנו: '+incomplete.map(i=>names.get(i)).join('، '):' כל הכבוד!'} `:`למועד הלימודים הקרוב לא סומנו: ${incomplete.map(i=>names.get(i)).join('، ')}`;
       const payload=JSON.stringify({title:isSummary?'סיכום שבוע הלימודים':'מטלות למחר',body,tag:`study-${kind}-${today}`,url:'/'});
       for(const s of userSubs){try{await webpush.sendNotification(s.subscription,payload)}catch(err){if([404,410].includes(err.statusCode))await db.from('push_subscriptions').delete().eq('user_id',userId).eq('endpoint',s.endpoint);else console.error('push failed',err.statusCode||err.message)}}
+      }
     }
     if(subs.length<500)break;offset+=500;
   }
