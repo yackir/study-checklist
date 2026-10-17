@@ -65,9 +65,6 @@
 :root[data-design^="theme-"] .detail-dot{background:var(--accent)}
 :root[data-design^="theme-"] .undo-bar{background:var(--surface);color:var(--ink);border-color:var(--line)}
 :root[data-design^="theme-"] :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-:root[data-design="theme-atelier"] .top,:root[data-design="theme-atelier"] .card,:root[data-design="theme-atelier"] .day{box-shadow:none;border-radius:9px}
-:root[data-design="theme-atelier"] .brand{font-family:Georgia,"Times New Roman",serif;letter-spacing:-.6px}
-:root[data-design="theme-atelier"] .day{border-inline-start:3px solid var(--accent)}
 :root[data-design="theme-cosmos"] .top{background:radial-gradient(circle at 0% 20%,#3e3b76 0,transparent 56%),var(--top);box-shadow:0 13px 38px #0306119c}
 :root[data-design="theme-cosmos"] .card{box-shadow:0 15px 30px #03061180}
 :root[data-design="theme-cosmos"] .day{background:#202b4b}
@@ -82,8 +79,6 @@
 :root[data-design="theme-notebook"] .day{background-color:var(--surface);background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 31px,#b9dbea42 31px,#b9dbea42 32px);border-radius:9px}
 :root[data-design="theme-notebook"] .top{border-radius:8px;border-inline-start:6px solid #efb5a0}
 :root[data-design="theme-notebook"] .today-tag{background:#ffefd1;color:#765229}
-:root[data-design="theme-atelier"]{--page:#f3efe7;--surface:#fffdf7;--ink:#2f332f;--line:#d7d0c1;--muted:#656c64;--accent:#a64d35;--on:#ffffff;--soft:#f3e2d6;--softink:#873b27;--top:#f9f5eb;--topink:#28352e;--topmuted:#626f62;--today:#f8ebdc;--shadow:#55433112;--bar:#ba6a4c;--wash:#e9dcc8;--art:none;--focus-wash:#55433112}
-.theme-choice[data-design-choice="theme-atelier"]{--preview-page:#f3efe7;--preview-card:#fffdf7;--preview-ink:#2f332f;--preview-accent:#a64d35;--preview-soft:#f3e2d6;--preview-art:none}
 :root[data-design="theme-cosmos"]{--page:#0d1226;--surface:#1c2542;--ink:#f6f8ff;--line:#3d4a6e;--muted:#bac7e4;--accent:#8de6dc;--on:#0d2838;--soft:#283e5a;--softink:#d3fff7;--top:#141d3d;--topink:#fafbff;--topmuted:#bdccfa;--today:#253653;--shadow:#02061180;--bar:#bba1ff;--wash:#202c52;--art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22450%22%20height%3D%22360%22%20viewBox%3D%220%200%20450%20360%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23a6ccff%22%20stroke-opacity%3D%22.31%22%20stroke-width%3D%221.5%22%3E%3Cpath%20d%3D%22M80%2057L160%2092%20218%2038%20298%20116%20382%2070M126%20228l70-42%2074%2052%2088-79%22%2F%3E%3Ccircle%20cx%3D%2280%22%20cy%3D%2257%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%22160%22%20cy%3D%2292%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22218%22%20cy%3D%2238%22%20r%3D%227%22%2F%3E%3Ccircle%20cx%3D%22298%22%20cy%3D%22116%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22382%22%20cy%3D%2270%22%20r%3D%227%22%2F%3E%3Ccircle%20cx%3D%22196%22%20cy%3D%22186%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22270%22%20cy%3D%22238%22%20r%3D%226%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%2390eadb%22%20opacity%3D%22.53%22%3E%3Ccircle%20cx%3D%2269%22%20cy%3D%22146%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%22399%22%20cy%3D%22245%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%22298%22%20cy%3D%22320%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%22300%22%20r%3D%222%22%2F%3E%3Cpath%20d%3D%22M353%20282l4%2012%2012%204-12%204-4%2012-4-12-12-4%2012-4z%22%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%22364%22%20cy%3D%2225%22%20r%3D%2237%22%20fill%3D%22none%22%20stroke%3D%22%23cdb8fd%22%20stroke-opacity%3D%22.22%22%20stroke-width%3D%2210%22%2F%3E%3C%2Fsvg%3E");--focus-wash:#02061180}
 .theme-choice[data-design-choice="theme-cosmos"]{--preview-page:#0d1226;--preview-card:#1c2542;--preview-ink:#f6f8ff;--preview-accent:#8de6dc;--preview-soft:#283e5a;--preview-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22450%22%20height%3D%22360%22%20viewBox%3D%220%200%20450%20360%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23a6ccff%22%20stroke-opacity%3D%22.31%22%20stroke-width%3D%221.5%22%3E%3Cpath%20d%3D%22M80%2057L160%2092%20218%2038%20298%20116%20382%2070M126%20228l70-42%2074%2052%2088-79%22%2F%3E%3Ccircle%20cx%3D%2280%22%20cy%3D%2257%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%22160%22%20cy%3D%2292%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22218%22%20cy%3D%2238%22%20r%3D%227%22%2F%3E%3Ccircle%20cx%3D%22298%22%20cy%3D%22116%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22382%22%20cy%3D%2270%22%20r%3D%227%22%2F%3E%3Ccircle%20cx%3D%22196%22%20cy%3D%22186%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22270%22%20cy%3D%22238%22%20r%3D%226%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%2390eadb%22%20opacity%3D%22.53%22%3E%3Ccircle%20cx%3D%2269%22%20cy%3D%22146%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%22399%22%20cy%3D%22245%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%22298%22%20cy%3D%22320%22%20r%3D%223%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%22300%22%20r%3D%222%22%2F%3E%3Cpath%20d%3D%22M353%20282l4%2012%2012%204-12%204-4%2012-4-12-12-4%2012-4z%22%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%22364%22%20cy%3D%2225%22%20r%3D%2237%22%20fill%3D%22none%22%20stroke%3D%22%23cdb8fd%22%20stroke-opacity%3D%22.22%22%20stroke-width%3D%2210%22%2F%3E%3C%2Fsvg%3E")}
 :root[data-design="theme-pop"]{--page:#ffeaf1;--surface:#fffdfa;--ink:#2d2352;--line:#4c2c78;--muted:#63517a;--accent:#6b39d3;--on:#ffffff;--soft:#ffe361;--softink:#30224f;--top:#fa7280;--topink:#2d214b;--topmuted:#4e3159;--today:#fff4ad;--shadow:#53358130;--bar:#ee617f;--wash:#fbc1d9;--art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22440%22%20height%3D%22430%22%20viewBox%3D%220%200%20440%20430%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%236b39d3%22%20stroke-opacity%3D%22.24%22%20stroke-width%3D%2213%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M80%2028q87-51%20110%2023t99%209%22%2F%3E%3Cpath%20d%3D%22M270%20288q-88-49-117%2038t-106%2046%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23fdbf2f%22%20fill-opacity%3D%22.52%22%3E%3Cpath%20d%3D%22M322%2080l18%2045%2049-4-35%2036%2019%2044-47-20-33%2035%205-49-47-19%2047-15z%22%2F%3E%3Ccircle%20cx%3D%22104%22%20cy%3D%22162%22%20r%3D%2233%22%2F%3E%3C%2Fg%3E%3Cg%20stroke%3D%22%23f36d85%22%20stroke-opacity%3D%22.51%22%20stroke-width%3D%2210%22%3E%3Cpath%20d%3D%22M401%20312l-45%2045m9-48%2034%2047%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23764bde%22%20fill-opacity%3D%22.3%22%3E%3Ccircle%20cx%3D%2234%22%20cy%3D%22300%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%22393%22%20cy%3D%2237%22%20r%3D%2214%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");--focus-wash:#53358130}
@@ -192,4 +187,121 @@
 :root[data-design="modern"] .action.remove-course:hover,:root[data-design="modern"] .action.soft-danger:hover,
 :root[data-design^="theme-"] .action.remove-course:hover,:root[data-design^="theme-"] .action.soft-danger:hover{
  background:#ffe0dc;border-color:#e6b0a9;color:#892b24;
+}
+
+
+/* GOLDEN HOUR — upbeat illustrated travel-poster / surf-print aesthetic. */
+:root[data-design="theme-golden"]{
+ --page:#fc7953;--surface:#fff8e8;--ink:#243d3e;--line:#246067;--muted:#53696a;
+ --accent:#12656a;--on:#ffffff;--soft:#ffdc73;--softink:#294748;
+ --top:#15565d;--topink:#fff9e9;--topmuted:#d3f0e8;--today:#fff0ab;
+ --shadow:#632e2740;--bar:#f45a34;--wash:#ffb175;--art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22520%22%20height%3D%22660%22%20viewBox%3D%220%200%20520%20660%22%3E%0A%3Cdefs%3E%0A%20%3CclipPath%20id%3D%22sun%22%3E%3Ccircle%20cx%3D%22370%22%20cy%3D%22146%22%20r%3D%22116%22%2F%3E%3C%2FclipPath%3E%0A%20%3Cpattern%20id%3D%22dots%22%20width%3D%2224%22%20height%3D%2224%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Ccircle%20cx%3D%226%22%20cy%3D%226%22%20r%3D%223%22%20fill%3D%22%23FEE7A6%22%20fill-opacity%3D%22.48%22%2F%3E%3C%2Fpattern%3E%0A%3C%2Fdefs%3E%0A%3Cpath%20d%3D%22M28%2012H491v116H28z%22%20fill%3D%22url(%23dots)%22%2F%3E%0A%3Cg%20clip-path%3D%22url(%23sun)%22%3E%0A%20%3Ccircle%20cx%3D%22370%22%20cy%3D%22146%22%20r%3D%22116%22%20fill%3D%22%23FFD25A%22%2F%3E%0A%20%3Cpath%20d%3D%22M250%20109H490M250%20130H490M250%20154H490M250%20181H490M250%20211H490%22%20stroke%3D%22%23FC7953%22%20stroke-width%3D%229%22%20stroke-opacity%3D%22.68%22%2F%3E%0A%20%3Cpath%20d%3D%22M220%20244L323%20167l48%2032%2081-79%2085%2095V288H220Z%22%20fill%3D%22%230E7471%22%20fill-opacity%3D%22.93%22%2F%3E%0A%3C%2Fg%3E%0A%3Ccircle%20cx%3D%22370%22%20cy%3D%22146%22%20r%3D%22120%22%20fill%3D%22none%22%20stroke%3D%22%23114A51%22%20stroke-width%3D%225%22%2F%3E%0A%3Cpath%20d%3D%22M-22%20395C78%20314%20160%20447%20267%20372S440%20287%20554%20346%22%20fill%3D%22none%22%20stroke%3D%22%23FFD15B%22%20stroke-width%3D%2224%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3Cpath%20d%3D%22M-20%20468C110%20375%20171%20510%20272%20443S443%20357%20552%20412%22%20fill%3D%22none%22%20stroke%3D%22%2315575C%22%20stroke-width%3D%2213%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3Cpath%20d%3D%22M-30%20544C96%20454%20152%20592%20270%20512S445%20439%20541%20479%22%20fill%3D%22none%22%20stroke%3D%22%23FEE9B3%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3Cg%20stroke%3D%22%23184E53%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%3E%0A%3Cpath%20d%3D%22M79%20139l11-9%2011%209%2011-9%2011%209M145%20178l9-8%209%208%209-8%209%208%22%20fill%3D%22none%22%2F%3E%0A%3Cpath%20d%3D%22M92%20250l25-27-1%2029%2025-12%22%20fill%3D%22none%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23FFD15B%22%3E%3Cpath%20d%3D%22M119%20584l13-27%2013%2027%2028%2012-28%209-13%2028-13-28-29-9z%22%2F%3E%3Ccircle%20cx%3D%22472%22%20cy%3D%22585%22%20r%3D%2211%22%2F%3E%3C%2Fg%3E%0A%3C%2Fsvg%3E");
+ --focus-wash:#3b74623b;
+}
+.theme-choice[data-design-choice="theme-golden"]{
+ --preview-page:#fc7953;--preview-card:#fff8e8;--preview-ink:#243d3e;
+ --preview-accent:#12656a;--preview-soft:#ffdc73;--preview-art:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22520%22%20height%3D%22660%22%20viewBox%3D%220%200%20520%20660%22%3E%0A%3Cdefs%3E%0A%20%3CclipPath%20id%3D%22sun%22%3E%3Ccircle%20cx%3D%22370%22%20cy%3D%22146%22%20r%3D%22116%22%2F%3E%3C%2FclipPath%3E%0A%20%3Cpattern%20id%3D%22dots%22%20width%3D%2224%22%20height%3D%2224%22%20patternUnits%3D%22userSpaceOnUse%22%3E%3Ccircle%20cx%3D%226%22%20cy%3D%226%22%20r%3D%223%22%20fill%3D%22%23FEE7A6%22%20fill-opacity%3D%22.48%22%2F%3E%3C%2Fpattern%3E%0A%3C%2Fdefs%3E%0A%3Cpath%20d%3D%22M28%2012H491v116H28z%22%20fill%3D%22url(%23dots)%22%2F%3E%0A%3Cg%20clip-path%3D%22url(%23sun)%22%3E%0A%20%3Ccircle%20cx%3D%22370%22%20cy%3D%22146%22%20r%3D%22116%22%20fill%3D%22%23FFD25A%22%2F%3E%0A%20%3Cpath%20d%3D%22M250%20109H490M250%20130H490M250%20154H490M250%20181H490M250%20211H490%22%20stroke%3D%22%23FC7953%22%20stroke-width%3D%229%22%20stroke-opacity%3D%22.68%22%2F%3E%0A%20%3Cpath%20d%3D%22M220%20244L323%20167l48%2032%2081-79%2085%2095V288H220Z%22%20fill%3D%22%230E7471%22%20fill-opacity%3D%22.93%22%2F%3E%0A%3C%2Fg%3E%0A%3Ccircle%20cx%3D%22370%22%20cy%3D%22146%22%20r%3D%22120%22%20fill%3D%22none%22%20stroke%3D%22%23114A51%22%20stroke-width%3D%225%22%2F%3E%0A%3Cpath%20d%3D%22M-22%20395C78%20314%20160%20447%20267%20372S440%20287%20554%20346%22%20fill%3D%22none%22%20stroke%3D%22%23FFD15B%22%20stroke-width%3D%2224%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3Cpath%20d%3D%22M-20%20468C110%20375%20171%20510%20272%20443S443%20357%20552%20412%22%20fill%3D%22none%22%20stroke%3D%22%2315575C%22%20stroke-width%3D%2213%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3Cpath%20d%3D%22M-30%20544C96%20454%20152%20592%20270%20512S445%20439%20541%20479%22%20fill%3D%22none%22%20stroke%3D%22%23FEE9B3%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3Cg%20stroke%3D%22%23184E53%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%3E%0A%3Cpath%20d%3D%22M79%20139l11-9%2011%209%2011-9%2011%209M145%20178l9-8%209%208%209-8%209%208%22%20fill%3D%22none%22%2F%3E%0A%3Cpath%20d%3D%22M92%20250l25-27-1%2029%2025-12%22%20fill%3D%22none%22%2F%3E%0A%3C%2Fg%3E%0A%3Cg%20fill%3D%22%23FFD15B%22%3E%3Cpath%20d%3D%22M119%20584l13-27%2013%2027%2028%2012-28%209-13%2028-13-28-29-9z%22%2F%3E%3Ccircle%20cx%3D%22472%22%20cy%3D%22585%22%20r%3D%2211%22%2F%3E%3C%2Fg%3E%0A%3C%2Fsvg%3E");
+}
+:root[data-design="theme-golden"] body{background-size:520px auto,100% 900px;background-position:left -30px top -6px,center top}
+:root[data-design="theme-golden"] .top{
+ padding:24px 19px;border:3px solid #123f45;border-radius:22px 22px 36px 16px;
+ background:linear-gradient(137deg,#207c78,#11515b 75%);
+ box-shadow:0 7px 0 #ffcc53,0 18px 32px #45252930;
+}
+:root[data-design="theme-golden"] .brand{font-size:31px;font-weight:900;letter-spacing:-1.15px;color:#fff6dd}
+:root[data-design="theme-golden"] .tag{background:#ffd363;color:#19474c;border:2px solid #17494a;font-weight:850}
+:root[data-design="theme-golden"] .card{
+ background:#fff8e8;border:2px solid #13545c;border-radius:22px 12px 22px 12px;
+ box-shadow:0 8px 0 #fbc754,0 18px 30px #632e2736;
+}
+:root[data-design="theme-golden"] .day{
+ background:#fffdf2;border:2px solid #2b6f70;border-inline-start:7px solid #e97845;
+ border-radius:18px 7px 18px 7px;
+}
+:root[data-design="theme-golden"] .day.is-today{background:#fff1b9;border-color:#176069;box-shadow:3px 4px 0 #fbd46b}
+:root[data-design="theme-golden"] .today-tag{background:#f8bc51;color:#234748;border-color:#cb942e}
+:root[data-design="theme-golden"] .week-current{
+ background:#ffd363;border:2px solid #184c53;color:#19454a;
+ box-shadow:0 4px 0 #24656b;border-radius:24px;
+}
+:root[data-design="theme-golden"] .week-dates{color:#19454a}
+:root[data-design="theme-golden"] .week-step{border:2px solid #24656b;border-radius:19px;background:#ffebad;color:#174f55}
+:root[data-design="theme-golden"] .progress{background:#f0dbaa}
+:root[data-design="theme-golden"] .fill{background:linear-gradient(90deg,#ef6a35,#ffc54b)}
+:root[data-design="theme-golden"] .historyitem.current-calendar-week{background:#ffedaa;border:2px solid #176069;border-inline-start:5px solid #f16936}
+:root[data-design="theme-golden"] .historyitem.current-calendar-week .pill{background:#12656a;color:#fff}
+:root[data-design="theme-golden"] .primary-action{background:#12656a;color:#fff;border-color:#12656a}
+:root[data-design="theme-golden"] .menu-button{background:#ffdb72;color:#134e54;border:2px solid #13505a}
+:root[data-design="theme-golden"] .menu-button[aria-expanded="true"]{background:#fff5c5;color:#134e54}
+:root[data-design="theme-golden"] .task>input,:root[data-design="theme-golden"] .subtask input{accent-color:#14777a}
+
+
+/* Task deletion uses the app's accessible dialog instead of window.confirm().
+   Container, labels, preview and cancel action inherit the active visual theme.
+   Actual destructive confirmation intentionally keeps its clear red semantic color. */
+:root{
+ --task-dialog-surface:#ffffff;--task-dialog-text:#283750;--task-dialog-subtle:#586984;
+ --task-dialog-soft:#f4f0f8;--task-dialog-border:#d9d5e1;--task-dialog-accent:#79549a;--task-dialog-accent-text:#ffffff;
+}
+:root[data-design="modern"]{
+ --task-dialog-surface:#ffffff;--task-dialog-text:#20345d;--task-dialog-subtle:#586984;
+ --task-dialog-soft:#eaf0fc;--task-dialog-border:#bdcdec;--task-dialog-accent:#315ecc;--task-dialog-accent-text:#ffffff;
+}
+:root[data-design^="theme-"]{
+ --task-dialog-surface:var(--surface);--task-dialog-text:var(--ink);--task-dialog-subtle:var(--muted);
+ --task-dialog-soft:var(--soft);--task-dialog-border:var(--line);
+ --task-dialog-accent:var(--accent);--task-dialog-accent-text:var(--on);
+}
+:root .app-dialog.task-delete-dialog{
+ width:min(400px,calc(100vw - 32px));max-height:min(85dvh,640px);padding:23px;
+ background:var(--task-dialog-surface);color:var(--task-dialog-text);
+ border:2px solid var(--task-dialog-border);border-radius:22px;
+ box-shadow:0 24px 76px #071d305c;
+}
+:root .app-dialog.task-delete-dialog::backdrop{background:#1115289c;backdrop-filter:blur(5px)}
+:root .task-delete-dialog .task-delete-symbol{
+ display:grid;place-items:center;width:46px;height:46px;margin-bottom:14px;
+ border-radius:15px;color:#9d3931;background:#fff1ef;border:1px solid #efcbc6;
+ font-size:30px;font-weight:550;line-height:1;
+}
+:root .task-delete-dialog h2{color:var(--task-dialog-text);font-size:22px;margin:0 0 11px;font-weight:820}
+:root .task-delete-dialog p.task-delete-description,
+:root[data-design^="theme-"] .task-delete-dialog p.task-delete-description{
+ margin:0 0 12px;color:var(--task-dialog-subtle);font-size:14px;line-height:1.7;
+}
+:root .task-delete-dialog .task-delete-preview{
+ padding:13px 14px;border:1px solid var(--task-dialog-border);border-inline-start:4px solid var(--task-dialog-accent);
+ border-radius:12px;background:var(--task-dialog-soft);color:var(--task-dialog-text);
+ font-size:14px;font-weight:750;line-height:1.6;overflow-wrap:anywhere;
+}
+:root .task-delete-dialog p.task-delete-hint,
+:root[data-design^="theme-"] .task-delete-dialog p.task-delete-hint{
+ color:var(--task-dialog-subtle);font-size:12px;line-height:1.6;margin:13px 0 0;
+}
+:root .task-delete-dialog .dialog-actions{margin-top:20px;display:flex;gap:10px}
+:root .task-delete-dialog .action.task-delete-cancel{
+ color:var(--task-dialog-text);background:var(--task-dialog-soft);
+ border:1px solid var(--task-dialog-border);font-weight:760;
+}
+:root .task-delete-dialog .action.task-delete-cancel:hover{filter:brightness(.95)}
+:root .task-delete-dialog .action.task-delete-confirm{
+ color:#ffffff;background:#a63640;border:1px solid #a63640;font-weight:800;
+}
+:root .task-delete-dialog .action.task-delete-confirm:hover{background:#882631;border-color:#882631}
+:root[data-design="theme-cosmos"] .app-dialog.task-delete-dialog{box-shadow:0 24px 80px #01050ee3}
+:root[data-design="theme-voltage"] .app-dialog.task-delete-dialog{
+ border:3px solid #15265b;box-shadow:6px 7px 0 #15265b,0 25px 60px #10246250;border-radius:14px;
+}
+:root[data-design="theme-pop"] .app-dialog.task-delete-dialog{
+ border:3px solid #4c2c78;box-shadow:6px 7px 0 #4c2c78;border-radius:15px;
+}
+:root[data-design="theme-golden"] .app-dialog.task-delete-dialog{
+ border:3px solid #12656a;border-radius:21px 11px 21px 11px;
+ box-shadow:0 7px 0 #ffd363,0 25px 60px #6433235c;
+}
+:root[data-design="theme-notebook"] .app-dialog.task-delete-dialog{border-radius:8px}
+@media(max-width:360px){
+ :root .app-dialog.task-delete-dialog{padding:17px}
+ :root .task-delete-dialog .dialog-actions{gap:7px}
+ :root .task-delete-dialog .action{padding:9px 7px;font-size:12px}
 }

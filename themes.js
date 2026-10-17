@@ -1,7 +1,7 @@
 (function(){
   'use strict';
-  const names={'theme-atelier':'אטלייה','theme-cosmos':'קוסמוס','theme-voltage':'וולט','theme-pop':'פופ־ארט','theme-notebook':'מחברת',modern:'העיצוב המודרני הקודם',classic:'העיצוב הקלאסי'};
-  const colors={'theme-atelier':'#f3efe7','theme-cosmos':'#0d1226','theme-voltage':'#2748d8','theme-pop':'#ffeaf1','theme-notebook':'#eaf4f8',modern:'#192f58',classic:'#8c63ad'};
+  const names={'theme-golden':'שעת זהב','theme-cosmos':'קוסמוס','theme-voltage':'וולט','theme-pop':'פופ־ארט','theme-notebook':'מחברת',modern:'העיצוב המודרני הקודם',classic:'העיצוב הקלאסי'};
+  const colors={'theme-golden':'#fc7953','theme-cosmos':'#0d1226','theme-voltage':'#2748d8','theme-pop':'#ffeaf1','theme-notebook':'#eaf4f8',modern:'#192f58',classic:'#8c63ad'};
   const elements=[...document.querySelectorAll('[data-design-choice]')];
   const status=document.getElementById('designStatus');
   function renderSelection(){
