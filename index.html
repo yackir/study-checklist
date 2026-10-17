@@ -134,7 +134,28 @@
 .historyitem.current-calendar-week:hover,:root[data-design="modern"] .historyitem.current-calendar-week:hover{background:#d9e6ff}
 .historyitem.current-calendar-week.selected-week,:root[data-design="modern"] .historyitem.current-calendar-week.selected-week{box-shadow:inset 0 0 0 1px #537bd2}
 </style><link rel="stylesheet" href="./themes.css"><script>try{const stored=localStorage.getItem("study-design");const chosen=stored==="theme-garden"?"theme-voltage":stored==="theme-atelier"?"theme-golden":stored;if(stored!==chosen)localStorage.setItem("study-design",chosen);document.documentElement.dataset.design=["theme-golden","theme-cosmos","theme-voltage","theme-pop","theme-notebook","classic","modern"].includes(chosen)?chosen:"modern"}catch(e){document.documentElement.dataset.design="modern"}</script><style>
-.photo-tools{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.photo-tools{display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line,#e5dced);flex-wrap:wrap}
+:root{--photo-accent:#79549a;--photo-soft:#f0e7f5;--photo-line:#d9c9e5;--photo-surface:#fff;--photo-ink:#24212b}
+:root[data-design="modern"]{--photo-accent:#315ecc;--photo-soft:#eaf0ff;--photo-line:#c5d4f4;--photo-ink:#202c49}
+.photo-tools .action.photo-add,.photo-source-options .action{background:var(--soft,var(--photo-soft));color:var(--softink,var(--photo-accent));border:1px solid var(--line,var(--photo-line));border-radius:12px;padding:9px 13px}
+.photo-icon{width:25px;height:25px;flex:none;display:block}
+.photo-tools .photo-hint{color:var(--muted,#736b7c);opacity:1}
+.photo-source-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+.photo-source-options .action{display:flex;flex-direction:column;align-items:center;gap:10px;min-height:100px;justify-content:center;font-size:14px}
+.photo-source-options .photo-icon{width:32px;height:32px}
+.photo-caption-label{display:block;margin:14px 0 6px;font-size:14px;font-weight:650}
+.photo-caption{display:block;width:100%;min-height:76px;resize:vertical;font:inherit;font-size:16px;padding:12px;border-radius:12px;border:1px solid var(--line,var(--photo-line));background:var(--surface,var(--photo-surface));color:var(--ink,var(--photo-ink))}
+.photo-caption::placeholder{color:var(--muted,#827a8b)}
+.photo-draft .photo-draft-image{max-height:42dvh}
+.photo-dialog-status{font-size:13px;color:var(--ink,var(--photo-ink));line-height:1.6}
+.photo-viewer .photo-save{background:var(--accent,var(--photo-accent));border-color:var(--accent,var(--photo-accent));color:var(--on,#fff)}
+:root[data-design="theme-pop"] .photo-add,:root[data-design="theme-pop"] .photo-source-options .action{border:2px solid var(--line);box-shadow:3px 3px 0 var(--line);border-radius:10px}
+:root[data-design="theme-cosmos"] .photo-add{box-shadow:0 0 15px #8de6dc18}
+:root[data-design="theme-notebook"] .photo-add,:root[data-design="theme-notebook"] .photo-caption{border-radius:6px;border-style:dashed}
+:root[data-design="theme-voltage"] .photo-add{border-radius:5px;border-width:2px;box-shadow:3px 3px 0 var(--accent)}
+:root[data-design="theme-golden"] .photo-add{border-radius:20px;box-shadow:0 3px 12px var(--shadow)}
+@media(max-width:370px){.photo-hint{flex-basis:100%}}
+
 .photo-tools .action{display:inline-flex;align-items:center;gap:7px;min-height:44px}
 .photo-hint{font-size:11px;opacity:.75}
 .task-photo{flex:none;width:56px;height:56px;padding:2px;border:1px solid #b8adcb;border-radius:10px;background:#fff;cursor:zoom-in;overflow:hidden}
@@ -288,6 +309,29 @@ async function compressTaskPhoto(file){
   throw Error('לא ניתן להקטין את התמונה. נסה לצלם שוב.');
  }finally{URL.revokeObjectURL(url)}
 }
+function photoIcon(kind='camera'){
+ const span=document.createElement('span');span.setAttribute('aria-hidden','true');
+ // Original line icons, inheriting the active theme's foreground color.
+ span.innerHTML=kind==='camera'
+  ?'<svg class="photo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 9.5h5l2-3h8l2 3h5a2 2 0 0 1 2 2V25a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11.5a2 2 0 0 1 2-2Z" fill="currentColor" fill-opacity=".09" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="16" cy="18" r="6" stroke="currentColor" stroke-width="1.8"/><path d="M13 18a3 3 0 0 1 3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="25" cy="13" r="1.3" fill="currentColor"/></svg>'
+  :'<svg class="photo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="4" width="23" height="23" rx="4" fill="currentColor" fill-opacity=".09" stroke="currentColor" stroke-width="1.8"/><path d="M5 22l7-8 6 6 4-4 6 6M2 10v17a3 3 0 0 0 3 3h17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22" cy="10" r="2" fill="currentColor"/></svg>';
+ return span;
+}
+function previewTaskPhoto(image,caption,trigger,onSave){
+ const dialog=courseDialog('תצוגה מקדימה');dialog.classList.add('photo-viewer','photo-draft');
+ const img=document.createElement('img');img.className='photo-draft-image';img.src=image;img.alt='התמונה שנבחרה למשימה';
+ const label=document.createElement('label');label.className='photo-caption-label';label.textContent='טקסט למשימה (לא חובה)';label.htmlFor='photoCaption';
+ const text=document.createElement('textarea');text.id='photoCaption';text.className='photo-caption';text.placeholder='מה צריך לעשות?';text.value=caption;
+ const status=document.createElement('p');status.className='photo-dialog-status';status.setAttribute('role','status');
+ const actions=document.createElement('div');actions.className='dialog-actions';
+ const cancel=dialogButton('ביטול','',()=>dialog.close());cancel.autofocus=true;
+ const save=dialogButton('שמירת המשימה','photo-save',()=>{
+  try{onSave(text.value.trim());dialog.close()}catch(error){status.textContent=error.message}
+ });
+ actions.append(cancel,save);dialog.append(img,label,text,status,actions);
+ dialog.addEventListener('close',()=>{if(trigger.isConnected)trigger.focus({preventScroll:true})},{once:true});
+ showCourseDialog(dialog);
+}
 function openTaskPhoto(task,trigger){
  const dialog=courseDialog(task.text||'משימה מצולמת');dialog.classList.add('photo-viewer');
  const img=document.createElement('img');img.src=task.image;img.alt=task.text||'משימה מצולמת';dialog.append(img);
@@ -308,35 +352,50 @@ function courseDetails(key,name){
  const field=document.createElement('input');field.className='new-task';field.placeholder='משימה חדשה…';field.setAttribute('aria-label','משימה חדשה: '+name);field.required=true;
  const add=document.createElement('button');add.type='submit';add.className='action';add.textContent='הוספה';form.append(field,add);body.append(form);
  const photoTools=document.createElement('div');photoTools.className='photo-tools';
- const camera=document.createElement('button');camera.type='button';camera.className='action';camera.textContent='📷 צילום משימה';camera.setAttribute('aria-label','צילום משימה: '+name);
+ const camera=document.createElement('button');camera.type='button';camera.className='action photo-add';camera.append(photoIcon(),document.createTextNode('הוספת תמונה'));camera.setAttribute('aria-label','הוספת תמונה למשימה: '+name);
  const picker=document.createElement('input');picker.type='file';picker.accept='image/*';picker.setAttribute('capture','environment');picker.hidden=true;
- const hint=document.createElement('span');hint.className='photo-hint';hint.textContent='נשמר במכשיר ונכלל בגיבוי';
- photoTools.append(camera,picker,hint);body.append(photoTools);
- camera.onclick=()=>picker.click();
- picker.onchange=async()=>{
-  const file=picker.files?.[0];if(!file)return;
-  const caption=field.value.trim();camera.disabled=true;status.textContent='מעבד ושומר תמונה…';
+ const gallery=document.createElement('input');gallery.type='file';gallery.accept='image/*';gallery.hidden=true;
+ const hint=document.createElement('span');hint.className='photo-hint';hint.textContent='צילום או תמונה מהגלריה';
+ photoTools.append(camera,picker,gallery,hint);body.append(photoTools);
+ camera.onclick=()=>{
+  document.activeElement?.blur();
+  const dialog=courseDialog('הוספת תמונה');dialog.classList.add('photo-source-dialog');
+  const options=document.createElement('div');options.className='photo-source-options';
+  const take=dialogButton('צילום תמונה','',()=>{dialog.close();picker.click()});take.prepend(photoIcon());take.autofocus=true;
+  const choose=dialogButton('תמונה קיימת','',()=>{dialog.close();gallery.click()});choose.prepend(photoIcon('gallery'));
+  options.append(take,choose);
+  const actions=document.createElement('div');actions.className='dialog-actions';actions.append(dialogButton('ביטול','',()=>dialog.close()));
+  dialog.append(options,actions);
+  dialog.addEventListener('close',()=>{if(camera.isConnected)camera.focus({preventScroll:true})},{once:true});
+  showCourseDialog(dialog);
+ };
+ const selectPhoto=async input=>{
+  const file=input.files?.[0];if(!file)return;
+  const caption=field.value.trim();camera.disabled=true;status.textContent='מעבד תמונה…';
   try{
    const image=await compressTaskPhoto(file);
-   const task={text:caption||'משימה מצולמת',done:false,image};entry().tasks.push(task);
-   if(!storeDetails()){entry().tasks.splice(entry().tasks.indexOf(task),1);throw Error('התמונה לא נשמרה: אין מספיק מקום במכשיר. יש לייצא גיבוי ולפנות מקום.')}
-   if(field.value.trim()===caption)field.value='';
-   renderTasks();updateDetailIndicators();status.textContent='התמונה נשמרה במכשיר';
-   // Returning from the phone camera can refresh the week and detach this panel.
-   if(!panel.isConnected){
-    renderWeek();const currentPanel=document.getElementById(panel.id);
-    if(currentPanel){currentPanel.hidden=false;document.querySelector('[aria-controls="'+panel.id+'"]')?.setAttribute('aria-expanded','true')}
-    $('#message').textContent='התמונה נשמרה במשימות של '+name;
-   }
+   status.textContent='';
+   previewTaskPhoto(image,caption,camera,text=>{
+    const task={text,done:false,image};entry().tasks.push(task);
+    if(!storeDetails()){entry().tasks.splice(entry().tasks.indexOf(task),1);throw Error('התמונה לא נשמרה: אין מספיק מקום במכשיר. יש לייצא גיבוי ולפנות מקום.')}
+    if(field.value.trim()===caption)field.value='';
+    renderTasks();updateDetailIndicators();status.textContent='התמונה נשמרה במכשיר';
+    if(!panel.isConnected){
+     renderWeek();const currentPanel=document.getElementById(panel.id);
+     if(currentPanel){currentPanel.hidden=false;document.querySelector('[aria-controls="'+panel.id+'"]')?.setAttribute('aria-expanded','true')}
+     $('#message').textContent='התמונה נשמרה במשימות של '+name;
+    }
+   });
   }catch(error){status.textContent=error.message;$('#message').textContent=error.message}
-  finally{camera.disabled=false;picker.value=''}
+  finally{camera.disabled=false;input.value=''}
  };
+ picker.onchange=()=>selectPhoto(picker);gallery.onchange=()=>selectPhoto(gallery);
  const status=document.createElement('div');status.className='save-status';status.setAttribute('role','status');body.append(status);
  const save=()=>{status.textContent=storeDetails()?'נשמר במכשיר':'השמירה נכשלה — יש לייצא גיבוי';updateDetailIndicators()};
  note.addEventListener('input',()=>{entry().note=note.value;save()});
  function renderTasks(){list.replaceChildren();(details[key]?.tasks||[]).forEach((task,index)=>{
   const row=document.createElement('div');row.className='subtask'+(task.done?' done':'');
-  const label=document.createElement('label'),check=document.createElement('input'),text=document.createElement('span');check.type='checkbox';check.checked=task.done;text.className='subtask-text';text.textContent=task.text;label.append(check,text);
+  const label=document.createElement('label'),check=document.createElement('input'),text=document.createElement('span');check.type='checkbox';check.checked=task.done;text.className='subtask-text';text.textContent=task.text;check.setAttribute('aria-label',task.text||'סימון התמונה כהושלמה');label.append(check,text);
   check.onchange=()=>{task.done=check.checked;row.classList.toggle('done',task.done);save()};
   const remove=document.createElement('button');remove.type='button';remove.className='remove-task';remove.textContent='×';remove.setAttribute('aria-label','מחיקת המשימה: '+task.text);
   remove.onclick=()=>{
@@ -346,7 +405,7 @@ function courseDetails(key,name){
    dialog.setAttribute('aria-describedby',intro.id);
    const symbol=document.createElement('span');symbol.className='task-delete-symbol';symbol.setAttribute('aria-hidden','true');symbol.textContent='×';
    dialog.insertBefore(symbol,dialog.firstChild);
-   const preview=document.createElement('div');preview.className='task-delete-preview';preview.textContent=task.text;
+   const preview=document.createElement('div');preview.className='task-delete-preview';preview.textContent=task.text||'התמונה המצורפת';
    const note=document.createElement('p');note.className='task-delete-hint';note.textContent='אפשר לבטל את הפעולה מיד אחרי המחיקה.';
    dialog.append(intro,preview,note);
    const actions=document.createElement('div');actions.className='dialog-actions';
@@ -359,7 +418,7 @@ function courseDetails(key,name){
        entry().tasks.splice(Math.min(index,entry().tasks.length),0,removed);
        save();if(panel.isConnected)renderTasks();else renderWeek();
      });
-     field.focus();
+     camera.focus({preventScroll:true});
    });
    actions.append(cancel,approve);dialog.append(actions);
    dialog.addEventListener('close',()=>{if(!confirmed&&remove.isConnected)remove.focus()},{once:true});
