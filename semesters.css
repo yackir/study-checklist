@@ -26,3 +26,11 @@
 /* Screen-level back control, clear of the iPhone safe area. */
 .app-page>.setup-back{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:60;display:inline-flex;align-items:center;justify-content:center;gap:6px;direction:ltr;min-height:44px;min-width:76px;margin:0;padding:8px 12px;border:1px solid var(--line,#ded3ea);border-radius:12px;background:var(--surface,#fff);color:var(--ink,#536c9c);font-size:14px;box-shadow:0 2px 10px #0000000a}
 :root:has(.app-page:not([hidden])>.setup-back) .wrap{padding-top:calc(68px + env(safe-area-inset-top))!important}
+
+/* Course day uses the same anchored, field-width list as semester setup. */
+.course-day-field{min-width:0}
+.course-day-field .course-day-picker{margin-top:7px}
+.course-editor .course-day-picker select[hidden]{display:none!important}
+.course-editor .course-day-picker .semester-select{min-height:46px;padding:9px;border-radius:10px;background:#fff;color:#202c49;border-color:#cbd5e5}
+:root[data-design^="theme-"] .course-editor .course-day-picker .semester-select{background:var(--surface);color:var(--ink);border-color:var(--line)}
+:root[data-design="modern"] .course-editor .course-day-picker .semester-select{background:#fff;color:#283750;border-color:#cbd5e5}
