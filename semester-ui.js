@@ -81,7 +81,7 @@
  state.workspace.semesters.forEach(s=>{const row=document.createElement('button');row.type='button';row.className='historyitem';row.classList.toggle('selected-week',s.id===state.workspace.active);row.textContent=state.label(s)+' · '+s.institution+(s.id===state.workspace.active?' · נבחר':'');row.onclick=()=>{if(s.id===state.workspace.active){reset(s);return}state.workspace.active=s.id;state.change();location.hash='home';location.reload()};list.append(row)});
  $('#newSemester').hidden=!state.workspace.semesters.length;
  reset(current);
- window.studyRouteGuard=requested=>{if(state.scope==='local'&&!state.active()&&!['appearance','backup'].includes(requested))return 'account';if(!state.active()&&!['account','appearance','backup'].includes(requested))return 'semester';return requested};
+
  window.dispatchEvent(new Event('hashchange'));
  $('#coursesForm').addEventListener('submit',()=>{if(!coursesDirty)location.hash='home'});
  // Backup includes every semester, not only the currently selected one.

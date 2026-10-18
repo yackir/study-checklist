@@ -13,3 +13,10 @@
 .semester-option.is-active{outline:2px solid var(--accent,#879ddc);outline-offset:-2px;background:var(--soft,#eee6f5);color:var(--softink,#694d85)}
 .semester-no-results{padding:12px 10px;line-height:1.7;font-size:13px}
 @media(hover:hover){.semester-option:hover{background:var(--soft,#eee6f5);color:var(--softink,#694d85)}}
+
+/* Keep first-run login and semester setup focused until a workspace is ready. */
+:root[data-onboarding="true"] .top,
+:root[data-onboarding="true"] .foot,
+:root[data-onboarding="true"] [data-page="semester"] .back-link{display:none!important}
+:root[data-onboarding="true"] .wrap{padding-top:max(24px,env(safe-area-inset-top))}
+:root[data-onboarding="true"] .app-page{margin-top:0}

@@ -21,5 +21,11 @@
   yearLabel(year){let n=year%1000,out='';for(const [v,l] of [[400,'ת'],[300,'ש'],[200,'ר'],[100,'ק'],[90,'צ'],[80,'פ'],[70,'ע'],[60,'ס'],[50,'נ'],[40,'מ'],[30,'ל'],[20,'כ'],[10,'י'],[9,'ט'],[8,'ח'],[7,'ז'],[6,'ו'],[5,'ה'],[4,'ד'],[3,'ג'],[2,'ב'],[1,'א']]){while(n>=v){out+=l;n-=v}}out=out.replace('יה','טו').replace('יו','טז');return out.slice(0,-1)+'״'+out.slice(-1)},
   label(s){return `סמסטר ${{a:'א׳',b:'ב׳',summer:'קיץ'}[s.term]} · ${this.yearLabel(s.year)}`}
  };
+ // Establish the first-run route before the page is rendered.
+ window.studyRouteGuard=requested=>{
+  if(!active())return scope==='local'?'account':'semester';
+  return requested;
+ };
+ document.documentElement.dataset.onboarding=String(!active());
  persist();
 })();
