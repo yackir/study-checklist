@@ -23,7 +23,7 @@
  };
  // Establish the first-run route before the page is rendered.
  window.studyRouteGuard=requested=>{
-  if(!active())return scope==='local'?'account':'semester';
+  if(!active())return scope==='local'?'account':requested==='account'?'account':'semester';
   return requested;
  };
  document.documentElement.dataset.onboarding=String(!active());

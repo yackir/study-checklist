@@ -16,7 +16,9 @@
 
 /* Keep first-run login and semester setup focused until a workspace is ready. */
 :root[data-onboarding="true"] .top,
-:root[data-onboarding="true"] .foot,
-:root[data-onboarding="true"] [data-page="semester"] .back-link{display:none!important}
+:root[data-onboarding="true"] .foot{display:none!important}
 :root[data-onboarding="true"] .wrap{padding-top:max(24px,env(safe-area-inset-top))}
 :root[data-onboarding="true"] .app-page{margin-top:0}
+
+.account-continue{display:none;text-decoration:none;margin-inline-start:8px;margin-top:12px}
+#signOut:not([hidden])+.account-continue{display:inline-flex;align-items:center}
