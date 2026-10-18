@@ -28,3 +28,16 @@ create policy "checks-own" on public.study_checks for all to authenticated using
 drop policy if exists "subscriptions-own" on public.push_subscriptions;
 create policy "subscriptions-own" on public.push_subscriptions for all to authenticated using (auth.uid()=user_id) with check (auth.uid()=user_id);
 -- Notification logs are server-only; do not add public policies.
+
+-- Version 7: isolated account workspace; old tables and legacy keys remain for rollback.
+create table if not exists public.study_workspaces (
+ user_id uuid primary key references auth.users(id) on delete cascade,
+ payload jsonb not null, revision integer not null default 1 check(revision > 0),
+ updated_at timestamptz not null default now(),
+ constraint workspace_size check(octet_length(payload::text) < 12000000)
+);
+alter table public.study_workspaces enable row level security;
+grant select,insert,update,delete on public.study_workspaces to authenticated;
+drop policy if exists workspace_owner on public.study_workspaces;
+create policy workspace_owner on public.study_workspaces for all to authenticated
+ using ((select auth.uid())=user_id) with check ((select auth.uid())=user_id);

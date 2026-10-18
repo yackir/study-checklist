@@ -8,7 +8,7 @@ const formatParts = date => Object.fromEntries(new Intl.DateTimeFormat('en-CA',{
 const iso = date => date.toISOString().slice(0,10);
 const plusDays=(day,n)=>{const d=new Date(day+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return iso(d)};
 const sundayOf=day=>{const d=new Date(day+'T12:00:00Z');return plusDays(day,-d.getUTCDay())};
-const inSemester = day=>day>=START && day<=END;
+
 const chunks=(arr,n)=>Array.from({length:Math.ceil(arr.length/n)},(_,i)=>arr.slice(i*n,(i+1)*n));
 
 export default async () => {
@@ -27,7 +27,12 @@ export default async () => {
     if(!subs?.length)break;
     const byUser=new Map();for(const s of subs){if(!byUser.has(s.user_id))byUser.set(s.user_id,[]);byUser.get(s.user_id).push(s)}
     for(const [userId,userSubs] of byUser){
-      const saved=userSubs.find(s=>Array.isArray(s.subscription?.courses))?.subscription.courses;
+      const {data:workspace,error:workspaceError}=await db.from('study_workspaces').select('payload').eq('user_id',userId).maybeSingle();
+      if(workspaceError)throw workspaceError;
+      const semesters=workspace?.payload?.semesters||[{id:'legacy',start:START,end:END,courses:null}];
+      for(const semester of semesters){
+      const inSemester=day=>day>=semester.start&&day<=semester.end;
+      const saved=semester.courses??userSubs.find(s=>Array.isArray(s.subscription?.courses))?.subscription.courses;
       const courses=saved===undefined?COURSE_DAYS.map((day,i)=>({id:String(i),day,name:COURSE_NAMES[i]})):saved;
       if(!Array.isArray(courses)||courses.some(c=>!c||typeof c.id!=='string'||!Number.isInteger(c.day)||c.day<0||c.day>6||typeof c.name!=='string')){console.error('Invalid reminder schedule');continue}
       const hasWeekend=courses.some(c=>c.day===5||c.day===6);
@@ -36,23 +41,24 @@ export default async () => {
       const target=weekday===5&&!hasWeekend?plusDays(today,2):plusDays(today,1);
       const targetWeek=sundayOf(isSummary?today:target);
       if(!isSummary&&!inSemester(target))continue;
-      if(isSummary&&!inSemester(targetWeek))continue;
+      if(isSummary&&(plusDays(targetWeek,6)<semester.start||targetWeek>semester.end))continue;
       const names=new Map(courses.map(c=>[c.id,c.name]));
       const indices=courses.filter(c=>isSummary?inSemester(plusDays(targetWeek,c.day)):(plusDays(targetWeek,c.day)===target)).map(c=>c.id);
       if(!indices.length)continue;
       const keys=indices.map(i=>`${targetWeek}|${i}`);
-      const {data:checks,error:checkError}=await db.from('study_checks').select('task_key,done').eq('user_id',userId).in('task_key',keys);
+      const {data:checks,error:checkError}=workspace?{data:keys.map(task_key=>({task_key,done:semester.checks?.[task_key]===true})),error:null}:await db.from('study_checks').select('task_key,done').eq('user_id',userId).in('task_key',keys);
       if(checkError){console.error('checks failed',checkError);continue}
       const done=new Set((checks||[]).filter(c=>c.done).map(c=>c.task_key));
       const incomplete=indices.filter(i=>!done.has(`${targetWeek}|${i}`));
       if(!isSummary&&!incomplete.length)continue;
-      const kind=isSummary?'weekly-summary':'daily-reminder';
+      const kind=(isSummary?'weekly-summary':'daily-reminder')+(semester.id==='legacy'?'':':'+semester.id);
       // Idempotency: one message per user per day. Logs persist and old weeks are never revisited.
       const {error:logError}=await db.from('notification_log').insert({user_id:userId,local_date:today,kind});
       if(logError){if(logError.code!=='23505')console.error('log failed',logError);continue}
       const body=isSummary?`השבוע הסתיים: ${indices.length-incomplete.length} מתוך ${indices.length} הושלמו.${incomplete.length?' לא סומנו: '+incomplete.map(i=>names.get(i)).join('، '):' כל הכבוד!'} `:`למועד הלימודים הקרוב לא סומנו: ${incomplete.map(i=>names.get(i)).join('، ')}`;
       const payload=JSON.stringify({title:isSummary?'סיכום שבוע הלימודים':'מטלות למחר',body,tag:`study-${kind}-${today}`,url:'/'});
       for(const s of userSubs){try{await webpush.sendNotification(s.subscription,payload)}catch(err){if([404,410].includes(err.statusCode))await db.from('push_subscriptions').delete().eq('user_id',userId).eq('endpoint',s.endpoint);else console.error('push failed',err.statusCode||err.message)}}
+      }
       }
     }
     if(subs.length<500)break;offset+=500;
