@@ -21,7 +21,7 @@
   function close(){menu.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.removeAttribute('aria-activedescendant');active=-1;shell.classList.remove('is-open')}
   function sync(fallback=''){if(!editable)trigger.textContent=field.selectedOptions[0]?.textContent||fallback||'בחירת שנה'}
   function highlight(index){active=index;[...menu.querySelectorAll('[role=option]')].forEach((node,i)=>{node.classList.toggle('is-active',i===active)});const node=menu.children[active];if(node){trigger.setAttribute('aria-activedescendant',node.id);node.scrollIntoView({block:'nearest'})}}
-  function choose(index){const option=options[index];if(!option)return;field.value=option.value;sync();close();field.dispatchEvent(new Event('change',{bubbles:true}));suppressFocus=true;trigger.focus({preventScroll:true});suppressFocus=false;close()}
+  function choose(index){const option=options[index];if(!option)return;field.value=option.value;sync();close();field.dispatchEvent(new Event('change',{bubbles:true}));if(editable)trigger.blur();else{ suppressFocus=true;trigger.focus({preventScroll:true});suppressFocus=false }close()}
   function open(){
    controls.forEach(c=>c.close());menu.replaceChildren();
    if(editable){const query=normalize(field.value);options=(window.StudyInstitutions||[]).filter(item=>normalize(item.name+' '+(item.aliases||'')).includes(query)).map(item=>({value:item.name,text:item.name}))}
