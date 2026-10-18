@@ -247,10 +247,61 @@ let coursesDirty=false;
 function renderCourseEditors(){
  const root=$('#courseEditors');root.replaceChildren();COURSES.forEach(addCourseEditor);coursesDirty=false;clearUndo('course');updateOverlapWarning();
 }
+let closeOpenCourseDayPicker=null;
+function setupCourseDayPicker(field,label){
+  const shell=document.createElement('div');shell.className='semester-picker course-day-picker';
+  const trigger=document.createElement('button');trigger.type='button';trigger.className='semester-select';trigger.id='courseDayControl-'+crypto.randomUUID();
+  label.htmlFor=trigger.id;label.id=trigger.id+'Label';
+  trigger.setAttribute('role','combobox');trigger.setAttribute('aria-labelledby',label.id);trigger.setAttribute('aria-haspopup','listbox');trigger.setAttribute('aria-expanded','false');
+  const menu=document.createElement('div');menu.className='semester-options';menu.id=trigger.id+'Options';menu.setAttribute('role','listbox');menu.setAttribute('aria-labelledby',label.id);menu.hidden=true;
+  trigger.setAttribute('aria-controls',menu.id);
+  field.hidden=true;field.tabIndex=-1;shell.append(field,trigger,menu);
+  let active=-1;
+  const optionNodes=[...field.options].map((option,i)=>{
+    const node=document.createElement('div');node.className='semester-option';node.id=menu.id+'-'+i;node.setAttribute('role','option');node.textContent=option.textContent;
+    node.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')e.preventDefault()});
+    node.addEventListener('click',()=>choose(i));menu.append(node);return node;
+  });
+  const sync=()=>{trigger.textContent=field.selectedOptions[0]?.textContent||'בחירת יום';optionNodes.forEach((node,i)=>node.setAttribute('aria-selected',String(i===field.selectedIndex)))};
+  function close(){
+    menu.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.removeAttribute('aria-activedescendant');shell.classList.remove('is-open');
+    optionNodes.forEach(node=>node.classList.remove('is-active'));active=-1;
+    if(closeOpenCourseDayPicker===close)closeOpenCourseDayPicker=null;
+  }
+  function highlight(index){
+    active=index;optionNodes.forEach((node,i)=>node.classList.toggle('is-active',i===index));
+    const node=optionNodes[index];if(node){trigger.setAttribute('aria-activedescendant',node.id);node.scrollIntoView({block:'nearest'})}
+  }
+  function choose(index){
+    if(!optionNodes[index])return;
+    field.selectedIndex=index;sync();close();field.dispatchEvent(new Event('change',{bubbles:true}));
+    trigger.focus({preventScroll:true});
+  }
+  function open(){
+    closeOpenCourseDayPicker?.();closeOpenCourseDayPicker=close;sync();
+    menu.hidden=false;trigger.setAttribute('aria-expanded','true');shell.classList.add('is-open');highlight(field.selectedIndex);
+  }
+  trigger.addEventListener('click',()=>menu.hidden?open():close());
+  trigger.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){if(!menu.hidden){e.preventDefault();close()}return}
+    if(e.key==='Tab'){close();return}
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'||e.key==='Home'||e.key==='End'){
+      e.preventDefault();if(menu.hidden)open();
+      const last=optionNodes.length-1;
+      const next=e.key==='Home'?0:e.key==='End'?last:active<0?field.selectedIndex:(active+(e.key==='ArrowDown'?1:-1)+optionNodes.length)%optionNodes.length;
+      highlight(next);return;
+    }
+    if((e.key==='Enter'||e.key===' ')&&!menu.hidden){e.preventDefault();choose(active)}
+  });
+  shell.addEventListener('focusout',e=>{if(!shell.contains(e.relatedTarget))close()});
+  sync();return shell;
+}
+document.addEventListener('pointerdown',e=>{if(closeOpenCourseDayPicker&&!e.target.closest('.course-day-picker'))closeOpenCourseDayPicker()});
+window.addEventListener('hashchange',()=>closeOpenCourseDayPicker?.());
 function addCourseEditor(course){
  const row=document.createElement('div');row.className='course-editor';row.dataset.id=course.id;
  const nameLabel=document.createElement('label');nameLabel.textContent='שם הקורס';const name=document.createElement('input');name.name='courseName';name.required=true;name.maxLength=200;name.value=course.name;nameLabel.append(name);row.append(nameLabel);
- const fields=document.createElement('div');fields.className='course-fields';const dayLabel=document.createElement('label');dayLabel.textContent='יום';const day=document.createElement('select');day.name='courseDay';NAMES.forEach((n,i)=>day.add(new Option(n,String(i))));day.value=String(course.day);dayLabel.append(day);fields.append(dayLabel);
+ const fields=document.createElement('div');fields.className='course-fields';const dayField=document.createElement('div');dayField.className='course-day-field';const dayLabel=document.createElement('label');dayLabel.textContent='יום';const day=document.createElement('select');day.name='courseDay';NAMES.forEach((n,i)=>day.add(new Option(n,String(i))));day.value=String(course.day);dayField.append(dayLabel,setupCourseDayPicker(day,dayLabel));fields.append(dayField);
  const times=document.createElement('div');times.className='course-times';
  course.time.split('–').forEach((time,i)=>{const group=document.createElement('div');const title=document.createElement('span');title.textContent=i?'שעת סיום':'שעת התחלה';group.append(title);const parts=time.split(':');const inputs=parts.map((v,j)=>{const input=document.createElement('input');input.type='hidden';input.name=(i?'end':'start')+(j?'Minute':'Hour');input.value=v;group.append(input);return input});const button=document.createElement('button');button.type='button';button.className='time-value';button.textContent=time;button.setAttribute('aria-label',title.textContent+' '+time);button.setAttribute('aria-haspopup','dialog');button.onclick=()=>openTimePicker(title.textContent,inputs,button);group.append(button);times.append(group)});fields.append(times);row.append(fields);
  const remove=document.createElement('button');remove.type='button';remove.className='action remove-course';remove.textContent='הסרת הקורס';remove.onclick=()=>confirmCourseRemoval(row,name.value,remove);row.append(remove);$('#courseEditors').append(row);
