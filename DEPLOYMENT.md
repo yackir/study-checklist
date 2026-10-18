@@ -47,3 +47,16 @@ semester dates, not whichever semester is currently being viewed.
 Manual smoke checks: existing local data upgrade; new account with no default courses;
 create/edit/switch semesters; all-semester export/import; Monday/Thursday starts;
 login/reload/logout/account switch; offline cached use; RLS ownership; reminder boundary.
+
+## Semester picker update (2026-10-18)
+
+Rollback branch: `backup/pre-semester-pickers-2026-10-18` (a25f788).
+New semester year choices are the current Hebrew year in Asia/Jerusalem and the
+previous year only. Existing out-of-range semesters retain their original year
+when edited; they do not add options to the new-semester picker.
+Institution suggestions are a bundled search directory in institutions.js,
+including aliases. It works offline and still permits free-text institutions.
+Directory membership does not imply verified calendar dates. Source references
+are recorded at the top of institutions.js; updates are manual, not live sync.
+All three fields use anchored, theme-aware lists with keyboard navigation.
+No backend or account schema changes are required. Service worker cache is v22.
