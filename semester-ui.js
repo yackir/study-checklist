@@ -1,7 +1,10 @@
 (() => {
  const state=window.StudyState, $=s=>document.querySelector(s), form=$('#semesterForm');
  const current=state.active();
- $('.sub').textContent=current?state.label(current):'בונים מערכת שמתאימה לך';
+ const termNames={a:'א׳',b:'ב׳',summer:'קיץ'};
+ $('.brand').textContent=current?'סמסטר '+termNames[current.term]:'';
+ $('.sub').textContent=current?state.yearLabel(current.year):'';
+ $('.semester-header-link').setAttribute('aria-label',current?'ניהול סמסטרים, '+state.label(current):'ניהול סמסטרים');
  $('.tag').textContent=current?.institution||'הלימודים שלי';
  const nowYear=Number(new Intl.DateTimeFormat('en-u-ca-hebrew',{year:'numeric',timeZone:'Asia/Jerusalem'}).format(new Date()));
  for(let year=nowYear;year>=nowYear-1;year--){const o=new Option(`${state.yearLabel(year)} · ${year-3761}–${year-3760}`,year);$('#academicYear').add(o)}
@@ -49,7 +52,9 @@
   form.dataset.edit=s?.id||'';$('#academicYear').value=s?.year||nowYear;$('#institution').value=s?.institution||'';$('#semesterTerm').value=s?.term||'a';
   yearPicker.sync(s&&(s.year<nowYear-1||s.year>nowYear)?state.yearLabel(s.year)+' · סמסטר שמור':'');termPicker.sync();institutionPicker.close();$('#semesterStatus').textContent='';
   $('#semesterStart').value=s?.start||'';$('#semesterEnd').value=s?.end||'';$('#manualDates').checked=!!s&&s.source!==state.source;
-  $('#semesterHeading').textContent=s?'מסגרת הלימודים':'בוא נבנה את המערכת שלך';$('#semesterSave').textContent=s?'שמירה והמשך לקורסים':'יצירת סמסטר והמשך לקורסים';update(false);
+  $('#semesterHeading').textContent=state.workspace.semesters.length?'ניהול סמסטרים':'בוא נבנה את המערכת שלך';
+  $('#semesterFormTitle').textContent=s?'עריכת הסמסטר הנבחר':state.workspace.semesters.length?'יצירת סמסטר חדש':'הגדרת הסמסטר הראשון';
+  $('#semesterSave').textContent=s?'שמירה והמשך לקורסים':'יצירת סמסטר והמשך לקורסים';update(false);
  }
  function update(changed=true){
   const institution=$('#institution').value.trim(),year=$('#academicYear').value||(form.dataset.edit===current?.id?current.year:''),term=$('#semesterTerm').value;
@@ -68,7 +73,7 @@
  form.onsubmit=e=>{e.preventDefault();const start=$('#semesterStart').value,end=$('#semesterEnd').value;
   if(!start||!end||start>end||(new Date(end)-new Date(start)>370*86400000)){ $('#semesterStatus').textContent='יש להזין טווח תאריכים תקין של עד שנה.';return}
   const institution=$('#institution').value.trim(),year=Number($('#academicYear').value||(form.dataset.edit===current?.id?current.year:0)),term=$('#semesterTerm').value;
-  if(state.workspace.semesters.some(s=>s.id!==form.dataset.edit&&s.year===year&&s.institution===institution&&s.term===term)){$('#semesterStatus').textContent='הסמסטר הזה כבר קיים. אפשר לבחור אותו ברשימה למטה.';return}
+  if(state.workspace.semesters.some(s=>s.id!==form.dataset.edit&&s.year===year&&s.institution===institution&&s.term===term)){$('#semesterStatus').textContent='הסמסטר הזה כבר קיים. אפשר לבחור אותו ברשימה למעלה.';return}
   const existing=state.workspace.semesters.find(s=>s.id===form.dataset.edit);
   const semester={...(existing||{id:crypto.randomUUID(),courses:[],checks:{},details:{}}),year,institution,term,start,end,source:$('#manualDates').checked?'manual':state.source};
   if(!year||!institution||!['a','b','summer'].includes(term))return;
@@ -78,8 +83,53 @@
   try{state.change();location.hash='courses';location.reload()}catch{state.replace(JSON.parse(before));$('#semesterStatus').textContent='אין מספיק מקום לשמירה במכשיר. יש לייצא גיבוי ולפנות מקום.'}
  };
  const list=$('#semesterList');
- state.workspace.semesters.forEach(s=>{const row=document.createElement('button');row.type='button';row.className='historyitem';row.classList.toggle('selected-week',s.id===state.workspace.active);row.textContent=state.label(s)+' · '+s.institution+(s.id===state.workspace.active?' · נבחר':'');row.onclick=()=>{if(s.id===state.workspace.active){reset(s);return}state.workspace.active=s.id;state.change();location.hash='home';location.reload()};list.append(row)});
- $('#newSemester').hidden=!state.workspace.semesters.length;
+ function confirmSemesterRemoval(semester){
+  const dialog=document.createElement('dialog');
+  dialog.className='app-dialog semester-delete-dialog';
+  dialog.setAttribute('aria-labelledby','semesterDeleteTitle');
+  dialog.setAttribute('aria-describedby','semesterDeleteDescription');
+  const heading=document.createElement('h2');heading.id='semesterDeleteTitle';heading.textContent='להסיר את הסמסטר?';
+  const description=document.createElement('p');description.id='semesterDeleteDescription';
+  description.textContent='הסרת '+state.label(semester)+' · '+semester.institution+' תמחק גם את הקורסים, המשימות, ההערות והסימונים של הסמסטר הזה. לא ניתן לבטל את המחיקה ללא גיבוי. האם להמשיך?';
+  const actions=document.createElement('div');actions.className='dialog-actions';
+  const cancel=document.createElement('button');cancel.type='button';cancel.className='action';cancel.textContent='ביטול';cancel.autofocus=true;cancel.onclick=()=>dialog.close();
+  const approve=document.createElement('button');approve.type='button';approve.className='action soft-danger';approve.textContent='מחיקת הסמסטר';
+  approve.onclick=()=>{
+   const previous=JSON.stringify(state.workspace);
+   const index=state.workspace.semesters.findIndex(s=>s.id===semester.id);
+   if(index<0){dialog.close();return}
+   state.workspace.semesters.splice(index,1);
+   if(state.workspace.active===semester.id)state.workspace.active=state.workspace.semesters[Math.min(index,state.workspace.semesters.length-1)]?.id||null;
+   try{state.change();dialog.close();location.hash='semester';location.reload()}
+   catch{state.replace(JSON.parse(previous));dialog.close();$('#semesterStatus').textContent='המחיקה לא נשמרה. יש לפנות מקום במכשיר ולנסות שוב.'}
+  };
+  actions.append(cancel,approve);dialog.append(heading,description,actions);
+  dialog.addEventListener('close',()=>{document.body.classList.remove('modal-open');dialog.remove()},{once:true});
+  document.body.append(dialog);document.body.classList.add('modal-open');dialog.showModal();
+ }
+ function renderSemesters(){
+  list.replaceChildren();
+  $('#existingSemesters').hidden=!state.workspace.semesters.length;
+  for(const semester of state.workspace.semesters){
+   const row=document.createElement('div');row.className='semester-list-row';
+   const selected=semester.id===state.workspace.active;
+   const choose=document.createElement('button');choose.type='button';choose.className='historyitem semester-choice';
+   choose.classList.toggle('selected-week',selected);
+   choose.textContent=state.label(semester)+' · '+semester.institution+(selected?' · נבחר':'');
+   if(selected)choose.setAttribute('aria-current','true');
+   choose.onclick=()=>{
+    if(selected){reset(semester);$('#semesterFormTitle').scrollIntoView({behavior:'smooth',block:'start'});return}
+    const previous=JSON.stringify(state.workspace);state.workspace.active=semester.id;
+    try{state.change();location.hash='home';location.reload()}
+    catch{state.replace(JSON.parse(previous));$('#semesterStatus').textContent='בחירת הסמסטר לא נשמרה. יש לפנות מקום במכשיר ולנסות שוב.'}
+   };
+   const remove=document.createElement('button');remove.type='button';remove.className='semester-remove';
+   remove.textContent='הסרה';remove.setAttribute('aria-label','הסרת '+state.label(semester)+' · '+semester.institution);
+   remove.onclick=()=>confirmSemesterRemoval(semester);
+   row.append(choose,remove);list.append(row);
+  }
+ }
+ renderSemesters();
  reset(current);
 
  window.dispatchEvent(new Event('hashchange'));
