@@ -716,9 +716,11 @@ const weekSwipe=(function(){
   }
   // Commit the current drag position before enabling the spring-like CSS transition.
   void base.offsetWidth;
+  const onTransformEnd=event=>{if(event.target===base&&event.propertyName==='transform')complete()};
   const complete=()=>{
    if(!settling)return;
    clearTimeout(finishTimer);
+   base.removeEventListener('transitionend',onTransformEnd);
    track.classList.remove('is-settling');
    const selected=destination||base;
    selected.classList.remove('is-neighbor');
@@ -736,12 +738,14 @@ const weekSwipe=(function(){
    return;
   }
   if(destination)track.style.height=destination.getBoundingClientRect().height+'px';
+  base.addEventListener('transitionend',onTransformEnd);
   requestAnimationFrame(()=>{
    if(!settling)return;
    translate(base,destination?direction*width:0);
-   if(preview)translate(preview,destination?0:-direction*width);
+   if(preview)translate(preview,destination?0:-Number(preview.dataset.direction)*width);
   });
-  finishTimer=setTimeout(complete,duration+65);
+  // A fallback handles background tabs or transitions cancelled by the browser.
+  finishTimer=setTimeout(complete,duration+220);
  }
  function navigate(direction){
   if(settling||gesture||!allowed(direction))return;
