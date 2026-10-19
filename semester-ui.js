@@ -69,7 +69,8 @@
  }
  ['academicYear','institution','semesterTerm'].forEach(id=>$('#'+id).addEventListener('change',()=>update()));
  $('#manualDates').onchange=()=>update(false);$('#useOfficialDates').onclick=()=>update(true);
- $('#newSemester').onclick=()=>reset(null);
+ $('#newSemester').innerHTML='<span class="semester-add-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span>הוספת סמסטר</span>';
+ $('#newSemester').onclick=()=>{list.querySelectorAll('.semester-list-row').forEach(row=>row.closeRemoval?.());reset(null);$('#semesterFormTitle').scrollIntoView({behavior:'smooth',block:'start'})};
  form.onsubmit=e=>{e.preventDefault();const start=$('#semesterStart').value,end=$('#semesterEnd').value;
   if(!start||!end||start>end||(new Date(end)-new Date(start)>370*86400000)){ $('#semesterStatus').textContent='יש להזין טווח תאריכים תקין של עד שנה.';return}
   const institution=$('#institution').value.trim(),year=Number($('#academicYear').value||(form.dataset.edit===current?.id?current.year:0)),term=$('#semesterTerm').value;
@@ -115,9 +116,12 @@
    const selected=semester.id===state.workspace.active;
    const choose=document.createElement('button');choose.type='button';choose.className='historyitem semester-choice';
    choose.classList.toggle('selected-week',selected);
-   choose.textContent=state.label(semester)+' · '+semester.institution+(selected?' · נבחר':'');
+   choose.textContent=state.label(semester);
+   choose.setAttribute('aria-description','החלקה ימינה או חץ ימינה במקלדת חושפים אפשרות הסרה.');
    if(selected)choose.setAttribute('aria-current','true');
    choose.onclick=()=>{
+    if(suppressClick)return;
+    if(opened){reveal(false);return}
     if(selected){reset(semester);$('#semesterFormTitle').scrollIntoView({behavior:'smooth',block:'start'});return}
     const previous=JSON.stringify(state.workspace);state.workspace.active=semester.id;
     try{state.change();location.hash='home';location.reload()}
@@ -126,7 +130,48 @@
    const remove=document.createElement('button');remove.type='button';remove.className='semester-remove';
    remove.textContent='הסרה';remove.setAttribute('aria-label','הסרת '+state.label(semester)+' · '+semester.institution);
    remove.onclick=()=>confirmSemesterRemoval(semester);
-   row.append(choose,remove);list.append(row);
+   let opened=false,suppressClick=false,gesture=null,clickTimer;
+   const width=84;
+   function reveal(open){
+    opened=open;row.classList.toggle('remove-revealed',open);
+    row.classList.remove('is-swiping');choose.style.transform=open?'translateX('+width+'px)':'';
+    remove.inert=!open;remove.tabIndex=open?0:-1;
+    remove.setAttribute('aria-hidden',String(!open));
+   }
+   function closeOthers(){list.querySelectorAll('.semester-list-row').forEach(other=>{if(other!==row)other.closeRemoval?.()})}
+   row.closeRemoval=()=>reveal(false);
+   choose.addEventListener('pointerdown',e=>{
+    if(!e.isPrimary||e.button!==0)return;
+    clearTimeout(clickTimer);suppressClick=false;
+    gesture={id:e.pointerId,x:e.clientX,y:e.clientY,start:opened?width:0,horizontal:false};
+   });
+   choose.addEventListener('pointermove',e=>{
+    if(!gesture||gesture.id!==e.pointerId)return;
+    const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;
+    if(!gesture.horizontal){
+     if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){gesture=null;return}
+     if(Math.abs(dx)<10||Math.abs(dx)<=Math.abs(dy))return;
+     gesture.horizontal=true;suppressClick=true;closeOthers();choose.setPointerCapture(e.pointerId);row.classList.add('is-swiping');
+    }
+    e.preventDefault();
+    gesture.offset=Math.max(0,Math.min(width,gesture.start+dx));
+    row.classList.toggle('remove-revealed',gesture.offset>0);
+    choose.style.transform='translateX('+gesture.offset+'px)';
+   });
+   function finish(e,cancelled=false){
+    if(!gesture||gesture.id!==e.pointerId)return;
+    const moved=gesture.horizontal,offset=gesture.offset??gesture.start;gesture=null;
+    if(moved){reveal(cancelled?opened:offset>=width*.4);if(choose.hasPointerCapture(e.pointerId))choose.releasePointerCapture(e.pointerId);clickTimer=setTimeout(()=>{suppressClick=false},300)}
+   }
+   choose.addEventListener('pointerup',e=>finish(e));
+   choose.addEventListener('pointercancel',e=>finish(e,true));
+   choose.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='Delete'){e.preventDefault();closeOthers();reveal(true);remove.focus()}
+    if(e.key==='ArrowLeft'||e.key==='Escape'){e.preventDefault();reveal(false)}
+   });
+   remove.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();reveal(false);choose.focus()}});
+   reveal(false);
+   row.append(remove,choose);list.append(row);
   }
  }
  renderSemesters();
