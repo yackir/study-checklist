@@ -231,18 +231,13 @@
 #days{position:relative;overflow:hidden;touch-action:pan-y;overscroll-behavior-x:contain}
 #days .week-slide{display:flow-root;width:100%;min-width:0;will-change:transform;transform:translate3d(0,0,0)}
 #days .week-slide.is-neighbor{position:absolute;top:0;left:0;pointer-events:none}
-#days.is-settling{transition:height 340ms cubic-bezier(.22,.8,.2,1)}
-#days.is-settling .week-slide{transition:transform 340ms cubic-bezier(.22,.8,.2,1);pointer-events:none}
-.progress .fill{position:relative;transition:width .5s cubic-bezier(.22,.9,.25,1),background .2s}
-.progress .fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);pointer-events:none;opacity:0}
-.progress.week-bar-changing .fill::after{animation:week-progress-glint .65s ease-out both}
-@keyframes week-progress-glint{0%{opacity:0;transform:translateX(-110%)}45%{opacity:.6}100%{opacity:0;transform:translateX(110%)}}
-#today.week-label-changing .week-current-label,#today.week-label-changing .week-dates{animation:week-label-soft-in .22s ease-out both}
-#today.week-label-changing .week-dates{animation-delay:35ms}
-@keyframes week-label-soft-in{from{opacity:.55;transform:translateY(2px)}to{opacity:1;transform:translateY(0)}}
+/* Allow a long, weighted deceleration after release, without moving the header. */
+#days.is-settling{transition:height var(--week-swipe-duration,700ms) cubic-bezier(.28,.58,.3,1)}
+#days.is-settling .week-slide{transition:transform var(--week-swipe-duration,700ms) cubic-bezier(.28,.58,.3,1);pointer-events:none}
+/* This also overrides the faster progress transitions supplied by individual themes. */
+:root .progress .fill{transition:width 950ms cubic-bezier(.35,0,.2,1),background .2s}
 @media(prefers-reduced-motion:reduce){
- #days.is-settling,#days.is-settling .week-slide,.progress .fill{transition:none!important}
- .progress.week-bar-changing .fill::after,#today.week-label-changing .week-current-label,#today.week-label-changing .week-dates{animation:none!important}
+ #days.is-settling,#days.is-settling .week-slide,:root .progress .fill{transition:none!important}
 }
 </style></head><body><main class="wrap"><header class="top"><div><a class="semester-header-link" href="#semester" aria-label="מעבר לניהול סמסטרים"><span class="brand">סמסטר</span><span class="sub"></span></a></div><div class="header-actions"><div class="tag">אוניברסיטה</div><div class="menu-shell"><button type="button" class="menu-button" id="menuButton" aria-label="פתיחת תפריט הניווט" aria-controls="topMenu" aria-expanded="false" aria-haspopup="true"><span class="menu-lines" aria-hidden="true">☰</span><span>תפריט</span></button><nav class="top-menu" id="topMenu" aria-label="ניווט באפליקציה" hidden><a class="menu-link" href="#home" data-page-link="home"><span class="menu-icon" aria-hidden="true">⌂</span><span>לוח לימודים</span></a><a class="menu-link" href="#courses" data-page-link="courses"><span class="menu-icon" aria-hidden="true">✎</span><span>עריכת קורסים</span></a><a class="menu-link" href="#settings" data-page-link="settings"><span class="menu-icon" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9.5 3-.5 2a7.3 7.3 0 0 0-1.5.9l-2-.6L3 9.6l1.5 1.4a7.3 7.3 0 0 0 0 2L3 14.4l2.5 4.3 2-.6A7.3 7.3 0 0 0 9 19l.5 2h5l.5-2a7.3 7.3 0 0 0 1.5-.9l2 .6 2.5-4.3-1.5-1.4a7.3 7.3 0 0 0 0-2L21 9.6l-2.5-4.3-2 .6A7.3 7.3 0 0 0 15 5l-.5-2z"/><circle cx="12" cy="12" r="3"/></svg></span><span>הגדרות</span></a><a class="menu-link" href="#account" data-page-link="account"><span class="menu-icon" aria-hidden="true">○</span><span>החשבון שלי</span></a></nav></div></div></header><div id="message" class="global-message" role="status" aria-live="polite"></div><section class="card app-page" id="homePage" data-page="home"><div id="weekView"><div class="week-switcher" role="group" aria-label="ניווט בין שבועות">
 <button type="button" class="week-step" id="prev" aria-label="הצגת השבוע הקודם"><span class="week-step-arrow" aria-hidden="true">→</span></button>
@@ -641,11 +636,10 @@ function renderDaysForWeek(targetWeek,root){
  root.replaceChildren();
  const todayDate=new Date(),todayKey=dateKey(todayDate);for(let d=0;d<7;d++){const dayItems=it.filter(x=>x.c.day===d);if(!dayItems.length){if(dateKey(offset(targetWeek,d))===todayKey)root.append(todayGap(todayDate));continue;}const box=document.createElement('div');box.className='day';const isToday=dateKey(dayItems[0].date)===todayKey;box.classList.toggle('is-today',isToday);if(isToday)box.setAttribute('aria-current','date');const head=document.createElement('div');head.className='dayhead';const title=document.createElement('span');title.textContent='יום '+NAMES[d];if(isToday){const tag=document.createElement('span');tag.className='today-tag';tag.textContent='היום';title.append(tag)}const date=document.createElement('span');date.className='date';date.textContent=short(dayItems[0].date);head.append(title,date);box.append(head);for(const x of dayItems){const label=document.createElement('div');label.className='task'+(data[courseKey(targetWeek,x.i)]?' done':'');const input=document.createElement('input');input.type='checkbox';input.checked=!!data[courseKey(targetWeek,x.i)];input.setAttribute('aria-label',x.c.name);input.addEventListener('change',()=>{data[courseKey(targetWeek,x.i)]=input.checked;store();syncCheck(courseKey(targetWeek,x.i),input.checked);label.classList.toggle('done',input.checked);updateProgress()});const span=document.createElement('span');span.textContent=x.c.name;const dot=document.createElement('small');dot.className='detail-dot';dot.dataset.detailKey=courseKey(targetWeek,x.i);dot.setAttribute('role','img');dot.setAttribute('aria-label','יש הערות או משימות');dot.title='יש הערות או משימות';const detail=details[courseKey(targetWeek,x.i)];dot.hidden=!(detail&&(detail.note.trim()||detail.tasks.length));span.append(dot);const time=document.createElement('small');time.className='time';time.textContent=x.c.time;const panel=courseDetails(courseKey(targetWeek,x.i),x.c.name);const toggle=document.createElement('button');toggle.type='button';toggle.className='course-toggle';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls',panel.id);toggle.append(span,time);toggle.onclick=()=>{const opening=panel.hidden;if(opening){root.querySelectorAll('.course-toggle[aria-expanded="true"]').forEach(other=>{const otherPanel=document.getElementById(other.getAttribute('aria-controls'));if(otherPanel)otherPanel.hidden=true;other.setAttribute('aria-expanded','false')})}panel.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening))};label.append(input,toggle);const row=document.createElement('div');row.className='course-row';row.append(label,panel);box.append(row)}root.append(box)}if(!it.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='אין קורסים בשבוע זה';root.append(empty)}
 }
-function updateWeekChrome(animated=false){
+function updateWeekChrome(){
  const actualWeek=dateKey(week)===dateKey(startOfWeek(new Date()));
  const title=short(week)+' – '+short(offset(week,6));
  const button=$('#today');
- const changed=$('#weekTitle').textContent!==title;
  $('#weekTitle').textContent=title;
  $('.week-current-label').textContent=actualWeek?'השבוע הנוכחי':'בחירת שבוע';
  button.classList.toggle('is-current',dateKey(week)===dateKey(currentWeek()));
@@ -653,14 +647,6 @@ function updateWeekChrome(animated=false){
  $('#prev').disabled=week<=startOfWeek(START);
  $('#next').disabled=offset(week,7)>END;
  updateProgress();
- if(animated&&changed&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-  button.classList.remove('week-label-changing');
-  const bar=$('#weekView .progress');
-  bar.classList.remove('week-bar-changing');
-  void button.offsetWidth;
-  button.classList.add('week-label-changing');
-  bar.classList.add('week-bar-changing');
- }
 }
 function renderWeek(){
  updateWeekChrome();
@@ -676,8 +662,7 @@ function renderHistory(){const root=$('#history');root.replaceChildren();for(let
 /* The day cards follow the finger; the progress and week label animate independently. */
 const weekSwipe=(function(){
  const track=$('#days');
- const duration=340;
- let gesture=null,settling=false,finishTimer=null;
+ let gesture=null,settling=false,finishTimer=null,lastOffset=0;
  const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  const allowed=direction=>direction>0?offset(week,7)<=END:offset(week,-7)>=startOfWeek(START);
  const translate=(slide,x)=>{slide.style.transform='translate3d('+x+'px,0,0)'};
@@ -706,6 +691,7 @@ const weekSwipe=(function(){
   const neighbor=neighborFor(direction);
   const width=track.clientWidth;
   const movement=neighbor?dx:Math.sign(dx)*Math.min(34,Math.abs(dx)*.22);
+  lastOffset=movement;
   translate(base,movement);
   if(neighbor)translate(neighbor,movement-direction*width);
  }
@@ -717,12 +703,16 @@ const weekSwipe=(function(){
   const width=track.clientWidth;
   const destination=commit&&preview?preview:null;
   const baseHeight=base.getBoundingClientRect().height;
+  // More remaining distance means longer coast. Each release eases out gradually.
+  const remaining=destination?Math.max(0,width-Math.abs(lastOffset)):Math.abs(lastOffset);
+  const duration=Math.round(Math.max(530,Math.min(790,540+remaining/Math.max(width,1)*230)));
+  track.style.setProperty('--week-swipe-duration',duration+'ms');
   track.style.height=baseHeight+'px';
   track.classList.add('is-settling');
   settling=true;
   if(destination){
    week=offset(week,7*direction);
-   updateWeekChrome(true);
+   updateWeekChrome();
   }
   // Commit the current drag position before enabling the spring-like CSS transition.
   void base.offsetWidth;
@@ -737,6 +727,8 @@ const weekSwipe=(function(){
    selected.style.transform='';
    track.replaceChildren(selected);
    track.style.height='';
+   track.style.removeProperty('--week-swipe-duration');
+   lastOffset=0;
    settling=false;
   };
   if(reduced()){
@@ -756,6 +748,7 @@ const weekSwipe=(function(){
   const base=currentSlide();if(!base)return;
   const preview=neighborFor(direction);
   if(!preview)return;
+  lastOffset=0;
   translate(preview,-direction*track.clientWidth);
   settle(true,direction);
  }
