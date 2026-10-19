@@ -191,6 +191,41 @@
 :root .menu-link[data-page-link="notifications"] .menu-icon{background:#dff6ed;color:#277d67}
 :root .menu-link[data-page-link="backup"] .menu-icon{background:#e0f1ff;color:#2b6da5}
 :root[data-onboarding="true"] .account-semesters{display:none}
+</style><style id="expandablePages">
+/* Inline disclosure panels share theme surfaces and retain all sibling headings. */
+.expand-page{--panel-accent:var(--accent,#7455b5)}
+.expand-page>.settings-title{margin-bottom:20px}
+.expand-page .expand-item{margin-top:10px;border:1px solid var(--line,#ded3ea);border-radius:15px;background:var(--surface,#fff);overflow:hidden;transition:border-color .25s,box-shadow .25s,background .25s}
+.expand-page .expand-item.is-open{border-color:var(--panel-accent);box-shadow:0 3px 14px color-mix(in srgb,var(--panel-accent) 10%,transparent)}
+.expand-page .expand-trigger{display:flex;align-items:center;gap:12px;width:100%;min-height:76px;padding:14px 15px;border:0;border-radius:0;background:transparent;color:var(--ink,inherit);font:inherit;text-align:start;cursor:pointer;touch-action:manipulation;transition:background .22s}
+.expand-page .expand-trigger:hover,.expand-page .is-open>.expand-trigger{background:var(--soft,#f5f1fa)}
+.expand-page .expand-trigger:focus-visible{outline:2px solid var(--panel-accent);outline-offset:-4px}
+.expand-icon{display:grid;place-items:center;width:39px;height:39px;flex:none;border-radius:12px;color:#7455b5;background:#eee6fc}
+.expand-icon svg{display:block;width:23px;height:23px}
+[data-panel="notifications"] .expand-icon{color:#277d67;background:#dff6ed}
+[data-panel="backup"] .expand-icon{color:#2b6da5;background:#e0f1ff}
+[data-panel="semester"] .expand-icon{color:#8b6019;background:#fff0d0}
+[data-panel="profile"] .expand-icon{color:#4863bb;background:#edf2ff}
+.expand-copy{display:grid;gap:4px;flex:1;min-width:0}
+.expand-copy strong{font-size:16px;line-height:1.3;font-weight:750}
+.expand-copy small{font-size:12px;line-height:1.4;font-weight:400;opacity:.65}
+.expand-indicator{position:relative;width:16px;height:16px;flex:none;opacity:.65}
+.expand-indicator:before,.expand-indicator:after{content:'';position:absolute;left:2px;top:7px;width:12px;height:1.5px;background:currentColor;border-radius:2px;transition:transform .28s,opacity .28s}
+.expand-indicator:after{transform:rotate(90deg)}
+.is-open>.expand-trigger .expand-indicator:after{transform:rotate(0);opacity:0}
+.expand-panel{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .32s cubic-bezier(.22,.7,.2,1),opacity .24s ease}
+.is-open>.expand-panel{grid-template-rows:1fr;opacity:1}
+.expand-clip{min-height:0;overflow:hidden}
+.expand-content{padding:0 15px 18px;min-width:0}
+.expand-content>[hidden]{display:none!important}
+.expand-content>.notice:first-of-type{margin-top:12px}
+.expand-content .theme-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+:root[data-design="modern"] .expand-page{--surface:#fff;--ink:#283750;--line:#d8e2f4;--soft:#f1f5fd;--panel-accent:#315ecc}
+:root[data-design="theme-golden"] .expand-item,:root[data-design="theme-pop"] .expand-item{border-width:2px}
+:root[data-design="theme-golden"] .expand-item.is-open,:root[data-design="theme-pop"] .expand-item.is-open{box-shadow:0 4px 0 var(--soft)}
+:root[data-design="theme-notebook"] .expand-item{border-radius:8px}
+@media(max-width:370px){.expand-page .expand-trigger{padding:12px 10px;gap:10px;min-height:70px}.expand-copy strong{font-size:15px}.expand-copy small{font-size:11px}.expand-content{padding-inline:10px}.expand-icon{width:34px;height:34px;border-radius:10px}}
+@media(prefers-reduced-motion:reduce){.expand-page *,.expand-page *:before,.expand-page *:after{transition:none!important;animation:none!important}}
 </style></head><body><main class="wrap"><header class="top"><div><a class="semester-header-link" href="#semester" aria-label="מעבר לניהול סמסטרים"><span class="brand">סמסטר</span><span class="sub"></span></a></div><div class="header-actions"><div class="tag">אוניברסיטה</div><div class="menu-shell"><button type="button" class="menu-button" id="menuButton" aria-label="פתיחת תפריט הניווט" aria-controls="topMenu" aria-expanded="false" aria-haspopup="true"><span class="menu-lines" aria-hidden="true">☰</span><span>תפריט</span></button><nav class="top-menu" id="topMenu" aria-label="ניווט באפליקציה" hidden><a class="menu-link" href="#home" data-page-link="home"><span class="menu-icon" aria-hidden="true">⌂</span><span>לוח לימודים</span></a><a class="menu-link" href="#courses" data-page-link="courses"><span class="menu-icon" aria-hidden="true">✎</span><span>עריכת קורסים</span></a><a class="menu-link" href="#settings" data-page-link="settings"><span class="menu-icon" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9.5 3-.5 2a7.3 7.3 0 0 0-1.5.9l-2-.6L3 9.6l1.5 1.4a7.3 7.3 0 0 0 0 2L3 14.4l2.5 4.3 2-.6A7.3 7.3 0 0 0 9 19l.5 2h5l.5-2a7.3 7.3 0 0 0 1.5-.9l2 .6 2.5-4.3-1.5-1.4a7.3 7.3 0 0 0 0-2L21 9.6l-2.5-4.3-2 .6A7.3 7.3 0 0 0 15 5l-.5-2z"/><circle cx="12" cy="12" r="3"/></svg></span><span>הגדרות</span></a><a class="menu-link" href="#account" data-page-link="account"><span class="menu-icon" aria-hidden="true">○</span><span>החשבון שלי</span></a></nav></div></div></header><div id="message" class="global-message" role="status" aria-live="polite"></div><section class="card app-page" id="homePage" data-page="home"><div id="weekView"><div class="week-switcher" role="group" aria-label="ניווט בין שבועות">
 <button type="button" class="week-step" id="prev" aria-label="הצגת השבוע הקודם"><span class="week-step-arrow" aria-hidden="true">→</span></button>
 <button type="button" class="week-current" id="today" aria-label="בחירת שבוע והצגת כל השבועות" aria-controls="historyView"><span class="week-current-label">השבוע הנוכחי</span><span class="week-dates" id="weekTitle" dir="ltr"></span></button>
@@ -198,6 +233,60 @@
 </div><div class="sr-only" id="weekStatus" role="status" aria-live="polite"></div><div class="progressrow"><strong>התקדמות שבועית</strong></div><div class="progress"><div class="fill" id="fill"></div></div><div id="days"></div>
 </div><div id="historyView" class="hide"><div class="history-top"><h2>בחירת שבוע</h2><button type="button" class="history-back" id="backToWeek">חזרה לרשימה ←</button></div><p class="muted">בחר שבוע כדי לראות את המטלות והסימונים שלו. השבועות נשמרים בנפרד.</p><button type="button" class="action primary-action" id="jumpCurrentWeek">חזרה לשבוע הנוכחי</button><div id="history" class="history"></div></div></section><section class="card app-page settings-page" data-page="semester" hidden><div class="settings-eyebrow">החשבון שלי · סמסטרים</div><h1 class="settings-title" id="semesterHeading">ניהול סמסטרים</h1><a class="back-link setup-back" href="#account" aria-label="חזרה לחשבון">← חזרה</a><div class="semester-existing" id="existingSemesters" hidden><h2 class="semester-section-heading">הסמסטרים שלי</h2><div id="semesterList" aria-label="בחירת סמסטר"></div><div class="actions"><button type="button" class="action" id="newSemester">＋ הוספת סמסטר</button></div></div><p class="notice">לכל סמסטר קורסים, משימות וסימונים משלו. בחר סמסטר קיים או הגדר סמסטר חדש.</p><h2 id="semesterFormTitle" class="semester-form-title">פרטי הסמסטר</h2><form id="semesterForm" class="semester-form"><label for="academicYear">שנת לימודים</label><select id="academicYear" required></select><label for="institution">מוסד אקדמי</label><input id="institution" required maxlength="200" placeholder="חיפוש או הקלדת מוסד" autocomplete="off"><label for="semesterTerm">סמסטר</label><select id="semesterTerm" required><option value="a">סמסטר א</option><option value="b">סמסטר ב</option><option value="summer">סמסטר קיץ</option></select><div id="semesterDates" hidden><p id="dateExplanation" class="notice" role="status"></p><a id="calendarSource" target="_blank" rel="noopener">לוח השנה הרשמי ↗</a><div class="date-fields"><label>תחילת הלימודים<input id="semesterStart" type="date" required></label><label>סיום ההוראה<input id="semesterEnd" type="date" required></label></div><label class="manual-dates"><input id="manualDates" type="checkbox">התאמת תאריכים למסלול שלי</label><button type="button" class="action" id="useOfficialDates" hidden>החלת התאריכים הרשמיים</button></div><button class="action primary-action" id="semesterSave" type="submit">המשך לקורסים</button><p id="semesterStatus" role="status"></p></form></section><section class="card app-page settings-page" data-page="settings" hidden><h1 class="settings-title">הגדרות</h1><div class="settings-links"><a class="menu-link" href="#appearance" data-page-link="appearance"><span class="menu-icon" aria-hidden="true">◈</span><span>מראה</span></a><a class="menu-link" href="#notifications" data-page-link="notifications"><span class="menu-icon" aria-hidden="true">♧</span><span>התראות</span></a><a class="menu-link" href="#backup" data-page-link="backup"><span class="menu-icon" aria-hidden="true">⇩</span><span>גיבוי</span></a></div></section><section class="card app-page settings-page" data-page="account" hidden><div class="account-semesters"><a class="menu-link" href="#semester" data-page-link="semester"><span class="menu-icon" aria-hidden="true">▦</span><span>ניהול סמסטרים</span></a></div><h1 class="settings-title">החשבון שלי</h1><p class="notice">מתחברים פעם אחת. בפתיחות הבאות המערכת שלך מחכה לך.</p><p id="accountStatus" role="status">בודק חיבור…</p><div id="loginOptions"><button type="button" id="googleLogin" class="action primary-action" disabled>המשך עם Google</button><p id="googleStatus" class="notice"></p><form id="emailLogin" class="semester-form"><label>או קישור כניסה למייל<input type="email" id="loginEmail" required autocomplete="email" placeholder="you@example.com" dir="ltr"></label><button class="action" type="submit">שליחת קישור כניסה</button></form></div><button type="button" class="action" id="signOut" hidden>התנתקות</button><a class="action account-continue" href="#semester">המשך להגדרת הסמסטר</a></section><section class="card app-page settings-page" id="coursesPage" data-page="courses" hidden><div class="settings-eyebrow">הגדרות · מערכת שעות</div><h1 class="settings-title"><span class="settings-icon" aria-hidden="true">✎</span>עריכת קורסים</h1><a class="back-link setup-back" href="#semester" aria-label="חזרה למסגרת הלימודים">← חזרה</a><p class="notice">שם הקורס בכתיבה חופשית; היום ושעות ההתחלה והסיום בבחירה בלבד, בפורמט 24 שעות. השינויים חלים על כל שבועות הסמסטר. הערות וסימונים נשארים משויכים לקורס בעת עריכה.</p><form id="coursesForm"><div id="courseEditors"></div><div id="overlapWarning" class="overlap-warning" role="status" hidden></div><div class="actions course-actions"><button type="button" class="action" id="addCourse">＋ הוספת קורס</button><button type="submit" class="action primary-action">שמירת השינויים</button><button type="button" class="action" id="cancelCourses">ביטול השינויים</button></div><p id="coursesStatus" role="status" aria-live="polite" class="notice"></p></form></section><section class="card app-page settings-page" id="notificationsPage" data-page="notifications" hidden><div class="settings-eyebrow">הגדרות · התראות</div><h1 class="settings-title"><span class="settings-icon" aria-hidden="true">♧</span>התראות באייפון</h1><a class="back-link" href="#settings">חזרה להגדרות</a><p class="notice">תזכורת ב־10:00 לקורסים של יום הלימודים הבא שלא סומנו. ללא קורסים בסוף השבוע: בשישי — עבור ראשון; בשבת — סיכום השבוע. כשיש קורסים בשישי או בשבת, התזכורות נשלחות ביום שלפני הקורס, ובשבת נשלח גם הסיכום. שבועות ישנים אינם מפעילים התראות.</p><div class="actions"><button class="action" id="enablePush">הפעלת התראות</button><button class="action" id="testPush">בדיקת התראה במכשיר</button></div><div id="pushStatus" class="notice" role="status">בודק אם שירות ההתראות הוגדר…</div></section><section class="card app-page settings-page" id="backupPage" data-page="backup" hidden><div class="settings-eyebrow">הגדרות · נתונים</div><h1 class="settings-title"><span class="settings-icon" aria-hidden="true">⇩</span>גיבוי הנתונים</h1><a class="back-link" href="#settings">חזרה להגדרות</a><p class="notice">הגיבוי כולל את כל הסמסטרים, הקורסים, הסימונים, ההערות ותמונות המשימות. הנתונים נשמרים במכשיר ומסתנכרנים לחשבון כשהחיבור לענן זמין. מומלץ לייצא גיבוי גם למחשב.</p><div class="actions"><button class="action" id="export">ייצוא גיבוי</button><button class="action" id="import">ייבוא גיבוי</button><input type="file" id="file" accept="application/json,.json" hidden></div></section><section class="card app-page settings-page appearance-page" id="appearancePage" data-page="appearance" hidden><div class="settings-eyebrow">הגדרות · התאמה אישית</div><h1 class="settings-title"><span class="settings-icon" aria-hidden="true">◈</span>מראה ועיצוב</h1><a class="back-link" href="#settings">חזרה להגדרות</a><p class="notice theme-lede">שש ערכות עם אופי שונה — כולל רקעים מאוירים. לחיצה על ערכה מחילה אותה מיד על כל האפליקציה, והבחירה נשמרת במכשיר.</p><div class="theme-gallery" role="group" aria-label="שש ערכות עיצוב"><button type="button" class="theme-choice" data-design-choice="theme-golden" aria-pressed="false"><span class="theme-art" aria-hidden="true"><span class="sample-dots"><i></i><i></i><i></i></span><span class="sample-lines"></span></span><span class="theme-choice-copy"><strong>שעת זהב</strong><small>רטרו חי · שקיעה, פטרול וחרדל</small></span><span class="theme-check" aria-hidden="true">✓</span></button><button type="button" class="theme-choice" data-design-choice="theme-cosmos" aria-pressed="false"><span class="theme-art" aria-hidden="true"><span class="sample-dots"><i></i><i></i><i></i></span><span class="sample-lines"></span></span><span class="theme-choice-copy"><strong>קוסמוס</strong><small>כהה · כוכבים וניאון</small></span><span class="theme-check" aria-hidden="true">✓</span></button><button type="button" class="theme-choice" data-design-choice="theme-voltage" aria-pressed="false"><span class="theme-art" aria-hidden="true"><span class="sample-dots"><i></i><i></i><i></i></span><span class="sample-lines"></span></span><span class="theme-choice-copy"><strong>וולט</strong><small>חשמלי · קובלט, ליים וקורל</small></span><span class="theme-check" aria-hidden="true">✓</span></button><button type="button" class="theme-choice" data-design-choice="theme-pop" aria-pressed="false"><span class="theme-art" aria-hidden="true"><span class="sample-dots"><i></i><i></i><i></i></span><span class="sample-lines"></span></span><span class="theme-choice-copy"><strong>פופ־ארט</strong><small>נועז · ורוד, סגול וצהוב</small></span><span class="theme-check" aria-hidden="true">✓</span></button><button type="button" class="theme-choice" data-design-choice="theme-notebook" aria-pressed="false"><span class="theme-art" aria-hidden="true"><span class="sample-dots"><i></i><i></i><i></i></span><span class="sample-lines"></span></span><span class="theme-choice-copy"><strong>מחברת</strong><small>מאויר · דף שורות ושרבוטים</small></span><span class="theme-check" aria-hidden="true">✓</span></button><button type="button" class="theme-choice" data-design-choice="modern" aria-pressed="false"><span class="theme-art" aria-hidden="true"><span class="sample-dots"><i></i><i></i><i></i></span><span class="sample-lines"></span></span><span class="theme-choice-copy"><strong>פולס</strong><small>מודרני · כחול חשמלי, קורל וזהב</small></span><span class="theme-check" aria-hidden="true">✓</span></button></div><div class="theme-legacy"><span>רוצה את המראה המקורי?</span><button type="button" data-design-choice="classic" aria-pressed="false">העיצוב הקלאסי</button></div><p id="designStatus" role="status" class="notice" aria-live="polite"></p></section><div class="foot">נבנה למעקב אישי · גרסה 7<a class="design-footer-link" href="#appearance">שינוי מראה</a></div></main><script>
 'use strict';
+
+(function initExpandablePages(){
+ if(!window.StudyState.active())return;
+ const groups=new Map(), panels=new Map();
+ const icons={
+ appearance:'<path d="m12 3 9 9-9 9-9-9z"/><path d="m12 7 5 5-5 5-5-5z"/>',
+ notifications:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>',
+ backup:'<path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/>',
+ semester:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18m-13 4h2m4 0h2m-8 3h2"/>',
+ profile:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>'
+ };
+ function setOpen(item,open){
+  item.button.setAttribute('aria-expanded',String(open));
+  item.row.classList.toggle('is-open',open);
+  item.panel.inert=!open;
+  item.panel.setAttribute('aria-hidden',String(!open));
+ }
+ function openItem(key,toggle=false){
+  const item=panels.get(key);if(!item)return;
+  const open=!(toggle&&item.button.getAttribute('aria-expanded')==='true');
+  for(const sibling of groups.get(item.group))setOpen(sibling,sibling===item&&open);
+ }
+ function add(group,key,title,subtitle,content){
+  const root=document.querySelector('[data-page="'+group+'"]');
+  const row=document.createElement('section');row.className='expand-item';row.dataset.panel=key;
+  const button=document.createElement('button');button.type='button';button.className='expand-trigger';
+  button.id='expand-trigger-'+key;button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls','expand-panel-'+key);
+  button.innerHTML='<span class="expand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[key]+'</svg></span><span class="expand-copy"><strong>'+title+'</strong><small>'+subtitle+'</small></span><span class="expand-indicator" aria-hidden="true"></span>';
+  const panel=document.createElement('div');panel.id='expand-panel-'+key;panel.className='expand-panel';panel.setAttribute('role','region');panel.setAttribute('aria-labelledby',button.id);
+  const inner=document.createElement('div');inner.className='expand-clip';
+  content.className='expand-content';content.hidden=false;content.removeAttribute('data-page');
+  content.querySelectorAll(':scope > .settings-title,:scope > .settings-eyebrow,:scope > .back-link').forEach(el=>el.hidden=true);
+  inner.append(content);panel.append(inner);row.append(button,panel);root.append(row);
+  const item={group,row,button,panel};if(!groups.has(group))groups.set(group,[]);groups.get(group).push(item);panels.set(key,item);
+  setOpen(item,false);button.onclick=()=>openItem(key,true);
+ }
+ const settings=document.querySelector('[data-page="settings"]');
+ settings.classList.add('expand-page');settings.querySelector('.settings-links').remove();
+ for(const [key,title,subtitle] of [['appearance','מראה','ערכת העיצוב שלך'],['notifications','התראות','תזכורות ועדכונים'],['backup','גיבוי','ייצוא ושחזור הנתונים']]){
+  add('settings',key,title,subtitle,document.querySelector('[data-page="'+key+'"]'));
+ }
+ const account=document.querySelector('[data-page="account"]');account.classList.add('expand-page');
+ account.querySelector('.account-semesters').remove();
+ const profile=document.createElement('div');
+ for(const child of [...account.children])if(!child.matches('h1'))profile.append(child);
+ add('account','semester','ניהול סמסטרים','בחירה ועריכה של מסגרת הלימודים',document.querySelector('[data-page="semester"]'));
+ add('account','profile','פרטי החשבון','התחברות וניהול החשבון',profile);
+ window.studyExpandableRoute=route=>{
+  if(['appearance','notifications','backup'].includes(route)){openItem(route);return 'settings'}
+  if(route==='semester'){openItem('semester');return 'account'}
+  return route;
+ };
+})();
+
 (function initNavigation(){
  const menuButton=document.getElementById('menuButton');
  const menu=document.getElementById('topMenu');
@@ -209,7 +298,7 @@
  function setMenuOpen(open){if(document.documentElement.dataset.onboarding==='true')open=false;menu.hidden=!open;menuButton.setAttribute('aria-expanded',String(open))}
  function showRoute(){
    const requested=location.hash.slice(1);
-   const route=routes.has(requested)?requested:'home'; const current=window.studyRouteGuard?window.studyRouteGuard(route):route;
+   const route=routes.has(requested)?requested:'home'; const guarded=window.studyRouteGuard?window.studyRouteGuard(route):route; const current=window.studyExpandableRoute?window.studyExpandableRoute(guarded):guarded;
    document.documentElement.dataset.onboarding=String(!window.StudyState.active());
    pages.forEach(page=>{page.hidden=page.dataset.page!==current});
    const parentRoute=['appearance','notifications','backup'].includes(current)?'settings':current==='semester'?'account':current;
