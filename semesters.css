@@ -58,3 +58,19 @@
 .semester-existing>.actions{margin-top:13px}
 .semester-delete-dialog{max-width:min(420px,calc(100vw - 32px))}
 @media(max-width:380px){.semester-header-link .brand{font-size:23px}.semester-header-link .sub{font-size:22px}#semesterList .semester-remove{min-width:52px}}
+
+/* Swipe the semester face right to uncover a single red action underneath. */
+#semesterList .semester-list-row{position:relative;display:block;padding:0;margin-bottom:2px;border:1px solid var(--line,#d8e2f4);border-radius:14px;overflow:hidden;isolation:isolate;background:var(--surface,#fff)}
+#semesterList .semester-choice{position:relative;z-index:1;display:flex;align-items:center;width:100%;min-height:64px;padding:17px 16px;margin:0;border:0;border-radius:12px;background:var(--surface,#fff);color:var(--ink,#283750);font-size:16px;font-weight:650;line-height:1.5;touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none;transition:transform .28s cubic-bezier(.22,.7,.2,1),background .2s}
+#semesterList .semester-choice.selected-week{background:var(--soft,#eef2ff);color:var(--softink,#40599c);font-weight:800}
+#semesterList .is-swiping .semester-choice{transition:none;cursor:grabbing}
+#semesterList .semester-remove{position:absolute;z-index:0;inset:0 auto 0 0;width:84px;height:100%;min-height:0;min-width:0;margin:0;padding:0;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;background:#b7444b;color:#fff;font-size:14px;font-weight:750;visibility:hidden}
+#semesterList .remove-revealed .semester-remove{visibility:visible}
+#semesterList .semester-remove:hover{background:#a63840}
+#semesterList .semester-remove:focus-visible{outline:2px solid white;outline-offset:-5px}
+.semester-existing>.actions{display:block;margin-top:12px}
+:root #newSemester{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;padding:11px 16px;border:1px dashed var(--line,#b9c9e8);border-radius:14px;background:var(--soft,#f1f5fd);color:var(--softink,#315cb7);font:inherit;font-size:15px;font-weight:750;box-shadow:none;cursor:pointer;transition:background .2s,border-color .2s}
+:root #newSemester:hover{border-color:var(--accent,#315ecc);background:color-mix(in srgb,var(--soft,#f1f5fd) 85%,var(--accent,#315ecc))}
+.semester-add-icon{display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:9px;background:color-mix(in srgb,currentColor 8%,transparent)}
+.semester-add-icon svg{width:19px;height:19px}
+@media(prefers-reduced-motion:reduce){#semesterList .semester-choice,:root #newSemester{transition:none!important}}
