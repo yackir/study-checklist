@@ -21,7 +21,7 @@
 :root[data-onboarding="true"] .app-page{margin-top:0}
 
 .account-continue{display:none;text-decoration:none;margin-inline-start:8px;margin-top:12px}
-#signOut:not([hidden])+.account-continue{display:inline-flex;align-items:center}
+:root[data-onboarding="true"] #signOut:not([hidden])+.account-continue{display:inline-flex;align-items:center}
 
 /* Screen-level back control, clear of the iPhone safe area. */
 .app-page>.setup-back{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:60;display:inline-flex;align-items:center;justify-content:center;gap:6px;direction:ltr;min-height:44px;min-width:76px;margin:0;padding:8px 12px;border:1px solid var(--line,#ded3ea);border-radius:12px;background:var(--surface,#fff);color:var(--ink,#536c9c);font-size:14px;box-shadow:0 2px 10px #0000000a}
