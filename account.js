@@ -1,4 +1,4 @@
-import {initGoogleCalendar} from './google-calendar.js';
+import {initGoogleCalendar} from './google-calendar.js?v=20261020-dropdown';
 import {CALENDAR_SCOPE} from './calendar-core.js';
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.49.10';
 const state=window.StudyState,$=s=>document.querySelector(s);
