@@ -60,3 +60,40 @@ Directory membership does not imply verified calendar dates. Source references
 are recorded at the top of institutions.js; updates are manual, not live sync.
 All three fields use anchored, theme-aware lists with keyboard navigation.
 No backend or account schema changes are required. Service worker cache is v22.
+
+## Direct Google Calendar export (2026-10-20)
+
+Menu: יומן גוגל, immediately below course editing. Exports the chosen semester to
+Google's `primary` calendar as weekly course series or daily university blocks.
+Uses Asia/Jerusalem wall time and RRULE COUNT (inclusive semester bounds).
+University blocks include gaps and use Wisteria. Export is user-triggered, not an
+unattended background sync. Holidays are not inferred.
+
+Google Cloud prerequisite: enable Google Calendar API in the same Google project
+as the existing Supabase Google OAuth client. Declare the additional scope
+`https://www.googleapis.com/auth/calendar.events.owned` on its consent screen.
+If the Google app is in Testing, its testers must be permitted there too.
+No new client secret or service-role key is shipped to the browser.
+
+The existing Supabase PKCE login requests the additional scope only on Calendar
+export. Google consent is required initially; expiry or revoked access resumes
+through Google OAuth before continuing the pending export. Supabase does NOT
+refresh Google provider tokens. This implementation uses online access and does
+not promise permanent offline Google authorization. Provider access tokens stay
+in the existing auth session / tab session storage, never workspace backups.
+A pending export is bound to the app user, semester snapshot and 30-minute window.
+Google subject must match the app's Google identity before calendar writes.
+
+Event IDs are deterministic per user/semester/course or day. Private Google event
+properties limit reconciliation to this app's selected semester. New series are
+written before obsolete series are deleted; ETags protect observed concurrent
+edits. Deleted Google event IDs use deterministic replacement generations.
+No attendees or invitations are created. Re-export overwrites app-managed series;
+changes made directly to those series in Google may therefore be replaced.
+
+Verification: `node --test tests/calendar.test.mjs` covers calendar bounds, DST
+wall times, block gaps, retries, mode replacement, tombstones, partial failures,
+pagination, ETags, and account isolation. Actual Google consent/API activation
+must be checked in a signed-in session; automated tests do not attest that the
+Google Cloud project has Calendar API enabled.
+Rollback by reverting the feature commit; this does not delete exported events.

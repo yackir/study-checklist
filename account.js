@@ -1,3 +1,5 @@
+import {initGoogleCalendar} from './google-calendar.js';
+import {CALENDAR_SCOPE} from './calendar-core.js';
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.49.10';
 const state=window.StudyState,$=s=>document.querySelector(s);
 let db,user,config,ready=false,revision=state.workspace.revision||0,queue=Promise.resolve(),timer;
@@ -41,7 +43,7 @@ async function init(){
  const response=await fetch('/.netlify/functions/config',{cache:'no-store'});if(!response.ok)throw Error();config=await response.json();
  if(!config.enabled)throw Error();
  db=createClient(config.url,config.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}});
- const {data,error}=await db.auth.getSession();if(error)throw error;user=data.session?.user;
+ const {data,error}=await db.auth.getSession();if(error)throw error;user=data.session?.user;rememberGoogleToken(data.session);
  // Existing installations retain their anonymous identity. Fresh installations must sign in.
  if(!user&&state.scope==='local'&&state.active()?.id==='legacy'&&!localStorage.getItem('study-legacy-claimed')){
   const result=await db.auth.signInAnonymously();if(result.error)throw result.error;user=result.data.user;
@@ -71,7 +73,7 @@ async function init(){
  const guard=window.studyRouteGuard;
  window.studyRouteGuard=route=>!user&&!['appearance','backup'].includes(route)?'account':guard(route);window.dispatchEvent(new Event('hashchange'));
  try{const settings=await fetch(config.url+'/auth/v1/settings',{headers:{apikey:config.anonKey}}).then(r=>r.json());$('#googleLogin').disabled=!settings.external?.google;$('#googleStatus').textContent=settings.external?.google?'':'כניסה עם Google תהיה זמינה לאחר הפעלתה. אפשר להיכנס באמצעות קישור למייל.'}catch{$('#googleStatus').textContent='לא ניתן לבדוק כרגע את זמינות Google.'}
- db.auth.onAuthStateChange((event,session)=>{if((event==='SIGNED_IN'&&session?.user.id!==user?.id)||event==='SIGNED_OUT')location.reload()});
+ db.auth.onAuthStateChange((event,session)=>{rememberGoogleToken(session);if((event==='SIGNED_IN'&&session?.user.id!==user?.id)||event==='SIGNED_OUT')location.reload()});
  }catch(e){console.error(e);accountStatus('לא ניתן להתחבר כרגע. בדוק חיבור לאינטרנט ונסה לרענן.');pushStatus('הענן אינו זמין כרגע. הנתונים הקיימים שמורים במכשיר.');if(!state.active()){location.hash='account'}}
 }
 $('#googleLogin').onclick=async()=>{if(!db)return;await queue;await saveCloud();const options={provider:'google',options:{redirectTo}};const {error}=user?.is_anonymous?await db.auth.linkIdentity(options):await db.auth.signInWithOAuth(options);if(error)announce('הכניסה לא הושלמה: '+error.message)};
@@ -83,7 +85,7 @@ $('#emailLogin').onsubmit=async e=>{e.preventDefault();if(!db){accountStatus('ש
 $('#signOut').onclick=async()=>{
  clearTimeout(timer);await queue;if(state.workspace.dirty&&!await saveCloud())return;
  try{const reg=await navigator.serviceWorker?.getRegistration();const sub=await reg?.pushManager.getSubscription();if(sub){const {error}=await db.from('push_subscriptions').delete().eq('user_id',user.id).eq('endpoint',sub.endpoint);if(error)throw error;await sub.unsubscribe()}
- const {error}=await db.auth.signOut({scope:'local'});if(error)throw error;localStorage.removeItem(state.storageKey);localStorage.removeItem('study-account-scope');location.hash='account';location.reload()}catch{announce('לא ניתן להשלים התנתקות. נסה שוב עם חיבור לרשת.')}
+ const {error}=await db.auth.signOut({scope:'local'});if(error)throw error;sessionStorage.removeItem('study-google-token:'+user.id);sessionStorage.removeItem('study-calendar-pending-v1');localStorage.removeItem(state.storageKey);localStorage.removeItem('study-account-scope');location.hash='account';location.reload()}catch{announce('לא ניתן להשלים התנתקות. נסה שוב עם חיבור לרשת.')}
 };
 $('#enablePush').onclick=async()=>{try{
  if(!ready||!user||!config?.vapidPublicKey)throw Error('יש להתחבר תחילה ולהגדיר את שירות ההתראות.');
@@ -97,4 +99,28 @@ $('#enablePush').onclick=async()=>{try{
 };
 $('#testPush').onclick=async()=>{if(!('Notification'in window)||Notification.permission!=='granted'){pushStatus('יש להפעיל התראות תחילה.');return}const reg=await navigator.serviceWorker.ready;await reg.showNotification('בדיקת התראות — לימודים',{body:'זו בדיקה מקומית של ההתראות במכשיר.',icon:'./icon.svg'})};
 window.addEventListener('online',()=>{if(ready)scheduleSave()});
-init();
+function rememberGoogleToken(session){
+ if(session?.provider_token&&session.user?.identities?.some(i=>i.provider==='google')){
+  try{sessionStorage.setItem('study-google-token:'+session.user.id,session.provider_token)}catch{}
+ }
+}
+async function flushForCalendar(){clearTimeout(timer);if(!ready)throw Error('יש להשלים סנכרון של מערכת השעות לענן לפני הייצוא.');queue=queue.catch(()=>{}).then(saveCloud);if(!await queue)throw Error('יש להשלים סנכרון של מערכת השעות לענן לפני הייצוא.');}
+initGoogleCalendar({
+ ready:()=>ready&&!!user&&!user.is_anonymous,
+ flush:flushForCalendar,
+ session:async()=>{
+  if(!db)return {};
+  const {data,error}=await db.auth.getSession();if(error)throw error;
+  rememberGoogleToken(data.session);
+  return {user:data.session?.user,token:data.session?.provider_token||sessionStorage.getItem('study-google-token:'+user?.id)};
+ },
+ connect:async()=>{
+  await flushForCalendar();
+  if(!user||user.is_anonymous)throw Error('יש להתחבר לחשבון אישי כדי לחבר את היומן.');
+  const options={provider:'google',options:{redirectTo,scopes:CALENDAR_SCOPE,queryParams:{access_type:'online',include_granted_scopes:'true',login_hint:user.email||''}}};
+  const hasGoogle=user.identities?.some(i=>i.provider==='google');
+  const {error}=hasGoogle?await db.auth.signInWithOAuth(options):await db.auth.linkIdentity(options);
+  if(error)throw Error('לא ניתן לחבר את יומן גוגל. נסה שוב מתוך חשבון המחובר באמצעות גוגל.');
+ }
+});
+init().finally(()=>window.dispatchEvent(new Event('study-account-ready')));
