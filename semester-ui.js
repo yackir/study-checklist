@@ -22,7 +22,7 @@
   const menu=document.createElement('div');menu.className='semester-options';menu.id=field.id+'Options';menu.setAttribute('role','listbox');menu.setAttribute('aria-labelledby',label.id);menu.hidden=true;trigger.setAttribute('aria-controls',menu.id);shell.append(menu);
   let options=[],active=-1,suppressFocus=false;
   function close(){menu.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.removeAttribute('aria-activedescendant');active=-1;shell.classList.remove('is-open')}
-  function sync(fallback=''){if(!editable)trigger.textContent=field.selectedOptions[0]?.textContent||fallback||'בחירת שנה'}
+  function sync(fallback=''){if(!editable){trigger.textContent=field.selectedOptions[0]?.textContent||fallback||'בחירת שנה';trigger.disabled=field.disabled;trigger.setAttribute('aria-disabled',String(field.disabled))}}
   function highlight(index){active=index;[...menu.querySelectorAll('[role=option]')].forEach((node,i)=>{node.classList.toggle('is-active',i===active)});const node=menu.children[active];if(node){trigger.setAttribute('aria-activedescendant',node.id);node.scrollIntoView({block:'nearest'})}}
   function choose(index){const option=options[index];if(!option)return;field.value=option.value;sync();close();field.dispatchEvent(new Event('change',{bubbles:true}));if(editable)trigger.blur();else{ suppressFocus=true;trigger.focus({preventScroll:true});suppressFocus=false }close()}
   function open(){
@@ -46,6 +46,8 @@
   document.addEventListener('pointerdown',e=>{if(!shell.contains(e.target))close()});
   const control={sync,close};controls.push(control);sync();return control;
  }
+ // Reuse the same field-width dropdown for the Google Calendar semester selector.
+ window.StudyDropdown=field=>picker(field);
  const yearPicker=picker($('#academicYear')),termPicker=picker($('#semesterTerm')),institutionPicker=picker($('#institution'),true);
  window.addEventListener('hashchange',()=>controls.forEach(c=>c.close()));
  function reset(s){
