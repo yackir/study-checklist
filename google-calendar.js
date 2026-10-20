@@ -5,6 +5,7 @@ const days=['ראשון','שני','שלישי','רביעי','חמישי','שיש
 const fingerprint=s=>JSON.stringify([s.id,s.start,s.end,s.courses]);
 export function initGoogleCalendar(auth){
  const form=$('#calendarForm'),select=$('#calendarSemester'),button=$('#calendarSubmit');let busy=false,accountReady=false;
+ const calendarPicker=window.StudyDropdown(select);
  const mode=()=>form.elements.calendarMode.value;
  const selected=()=>state.workspace.semesters.find(s=>s.id===select.value);
  const status=(text,error=false)=>{const el=$('#calendarStatus');el.textContent=text;el.dataset.error=String(error)};
@@ -22,12 +23,14 @@ export function initGoogleCalendar(auth){
  }
  function refresh(){
   if(busy)return;
+  calendarPicker.close();
   const previous=select.value;select.replaceChildren();for(const s of state.workspace.semesters){const o=document.createElement('option');o.value=s.id;o.textContent=state.label(s);select.append(o)}
   select.value=state.workspace.semesters.some(s=>s.id===previous)?previous:state.workspace.active||'';
+  calendarPicker.sync('בחירת סמסטר');
   const meta=selected()?.calendarExport;if(meta&&['courses','blocks'].includes(meta.mode))form.elements.calendarMode.value=meta.mode;
   preview();
  }
- function setBusy(value){busy=value;select.disabled=value;form.querySelectorAll('input').forEach(el=>el.disabled=value);form.setAttribute('aria-busy',String(value));preview()}
+ function setBusy(value){busy=value;select.disabled=value;calendarPicker.sync('בחירת סמסטר');if(value)calendarPicker.close();form.querySelectorAll('input').forEach(el=>el.disabled=value);form.setAttribute('aria-busy',String(value));preview()}
  async function authorize(s,chosenMode){
   const pending={owner:state.scope,semester:s.id,mode:chosenMode,fingerprint:fingerprint(s),created:Date.now()};
   sessionStorage.setItem(PENDING,JSON.stringify(pending));
@@ -74,7 +77,7 @@ export function initGoogleCalendar(auth){
   if(!pending)return;
   location.hash='calendar';
   if(pending.owner!==state.scope||Date.now()-pending.created>30*60*1000){status('החיבור השתנה או פג תוקף בקשת הייצוא. יש לבדוק את הסמסטר ולנסות שוב.',true);return}
-  select.value=pending.semester;form.elements.calendarMode.value=pending.mode;preview();
+  select.value=pending.semester;calendarPicker.sync('בחירת סמסטר');form.elements.calendarMode.value=pending.mode;preview();
   if(!selected()||fingerprint(selected())!==pending.fingerprint){status('מערכת השעות השתנתה מאז תחילת החיבור. יש לבדוק את התצוגה המקדימה וללחוץ שוב על ייצוא.',true);return}
   await run(true);
  }
