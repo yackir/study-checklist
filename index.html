@@ -515,11 +515,26 @@ function openTimePicker(title,inputs,trigger){
  const wheels=document.createElement('div');wheels.className='time-wheels';const controls=[];
  [24,60].forEach((count,j)=>{
   const wheel=document.createElement('div');wheel.className='time-wheel';wheel.tabIndex=0;wheel.setAttribute('role','listbox');wheel.setAttribute('aria-label',j?'דקות':'שעות');const options=[];
-  const value=()=>Math.max(0,Math.min(count-1,Math.round(wheel.scrollTop/44)));
-  const highlight=()=>{const selected=value();options.forEach((option,n)=>option.setAttribute('aria-selected',String(n===selected)));wheel.setAttribute('aria-activedescendant',options[selected].id)};
-  const select=n=>{wheel.scrollTop=Math.max(0,Math.min(count-1,n))*44;highlight()};
-  for(let n=0;n<count;n++){const option=document.createElement('button');option.type='button';option.tabIndex=-1;option.className='wheel-option';option.id='time-option-'+j+'-'+n;option.setAttribute('role','option');option.textContent=String(n).padStart(2,'0');option.onclick=()=>{select(n);wheel.focus({preventScroll:true})};options.push(option);wheel.append(option)}
-  wheel.addEventListener('scroll',highlight,{passive:true});wheel.addEventListener('keydown',e=>{let n=value();if(e.key==='ArrowDown')n++;else if(e.key==='ArrowUp')n--;else if(e.key==='Home')n=0;else if(e.key==='End')n=count-1;else if(e.key==='PageDown')n+=5;else if(e.key==='PageUp')n-=5;else return;e.preventDefault();select(n)});
+  // Repeated cycles keep both neighbours visible at midnight. Rebase only
+  // after scrolling settles, preserving native touch momentum and scroll snap.
+  const cycles=7,middle=count*Math.floor(cycles/2),rowHeight=44;
+  const wrap=n=>((n%count)+count)%count;
+  const index=()=>Math.max(0,Math.min(options.length-1,Math.round(wheel.scrollTop/rowHeight)));
+  const value=()=>wrap(index());
+  const highlight=()=>{const selected=index();options.forEach((option,n)=>option.setAttribute('aria-selected',String(n===selected)));wheel.setAttribute('aria-activedescendant',options[selected].id)};
+  const selectIndex=n=>{wheel.scrollTop=n*rowHeight;highlight()};
+  const select=n=>selectIndex(middle+wrap(n));
+  let settleTimer,touching=false;
+  const recenter=()=>{clearTimeout(settleTimer);if(!touching&&dialog.open){const target=middle+value();if(index()!==target)selectIndex(target)}};
+  const settle=()=>{clearTimeout(settleTimer);settleTimer=setTimeout(recenter,180)};
+  for(let n=0;n<count*cycles;n++){const option=document.createElement('button');option.type='button';option.tabIndex=-1;option.className='wheel-option';option.id='time-option-'+j+'-'+n;option.setAttribute('role','option');option.textContent=String(wrap(n)).padStart(2,'0');option.onclick=()=>{selectIndex(n);settle();wheel.focus({preventScroll:true})};options.push(option);wheel.append(option)}
+  wheel.addEventListener('scroll',()=>{highlight();settle()},{passive:true});
+  wheel.addEventListener('scrollend',recenter);
+  wheel.addEventListener('touchstart',()=>{touching=true;clearTimeout(settleTimer)},{passive:true});
+  const endTouch=()=>{touching=false;settle()};
+  wheel.addEventListener('touchend',endTouch,{passive:true});wheel.addEventListener('touchcancel',endTouch,{passive:true});
+  dialog.addEventListener('close',()=>clearTimeout(settleTimer),{once:true});
+  wheel.addEventListener('keydown',e=>{let n=value();if(e.key==='ArrowDown')n++;else if(e.key==='ArrowUp')n--;else if(e.key==='Home')n=0;else if(e.key==='End')n=count-1;else if(e.key==='PageDown')n+=5;else if(e.key==='PageUp')n-=5;else return;e.preventDefault();select(n)});
   controls.push({wheel,select,value});wheels.append(wheel);
  });dialog.append(wheels);
  const actions=document.createElement('div');actions.className='dialog-actions';actions.append(dialogButton('ביטול','',()=>dialog.close()),dialogButton('אישור','primary-action',()=>{controls.forEach((control,j)=>inputs[j].value=String(control.value()).padStart(2,'0'));const time=inputs.map(input=>input.value).join(':');trigger.textContent=time;trigger.setAttribute('aria-label',title+' '+time);markCoursesDirty();dialog.close()}));dialog.append(actions);showCourseDialog(dialog);controls.forEach((control,j)=>control.select(Number(inputs[j].value)));controls[0].wheel.focus({preventScroll:true});
