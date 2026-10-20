@@ -1,6 +1,12 @@
 :root .menu-link[data-page-link="calendar"] .menu-icon{background:#e0f0fa;color:#2874a6}
-.calendar-form{display:grid;gap:18px}.calendar-form>label{display:grid;gap:8px;font-weight:650}
-.calendar-form select{width:100%;min-height:48px;border-radius:12px;border:1px solid var(--line,#ccd5e5);padding:10px;font:inherit;color:var(--ink,#25324b);background:var(--surface,#fff)}
+.calendar-form{display:grid;gap:18px}
+.calendar-semester-field{display:grid;gap:8px;min-width:0;font-weight:650}
+.calendar-semester-field>label{font-size:14px}
+.calendar-semester-field .semester-picker{width:100%;min-width:0}
+.calendar-semester-field .semester-select{width:100%;min-height:48px;border-radius:12px;border:1px solid var(--line,#ccd5e5);padding:10px 13px;font:inherit;font-size:16px;color:var(--ink,#25324b);background:var(--surface,#fff);font-weight:500}
+.calendar-semester-field .semester-select:focus-visible{outline:2px solid var(--accent,#879ddc);outline-offset:2px}
+.calendar-semester-field .semester-options{max-height:min(260px,40dvh);z-index:50}
+#calendarSemester[hidden]{display:none!important}
 .calendar-modes{margin:0;padding:0;border:0;display:grid;gap:10px}.calendar-modes legend{padding:0 0 10px;font-weight:700}
 .calendar-choice{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid var(--line,#d9e1ee);border-radius:15px;background:var(--soft,#f4f7fc);cursor:pointer}
 .calendar-choice:has(input:checked){border-color:var(--accent,#315ecc);box-shadow:inset 0 0 0 1px var(--accent,#315ecc)}
